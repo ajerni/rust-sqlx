@@ -16,7 +16,7 @@ Served live at: https://rust-sqlx.onrender.com
     {"isbn":"999","title":"Rust Rocks Vol. 2","author":"Json Checker","metadata":{"avg_review":10.0,"tags":["cool", "stuff"]}}
 
     Update: PATCH https://rust-sqlx.onrender.com/update/999
-     Add raw json to the body of the request i.e.:
+    Add raw json to the body of the request i.e.:
     {"isbn":"999","title":"Rust Rocks Vol. 3","author":"Json Checker","metadata":{"avg_review":9.0,"tags":["still", "cool"]}}
 
     Delete: DELETE https://rust-sqlx.onrender.com/delete/999

@@ -8,7 +8,7 @@ Served live at: https://rust-sqlx.onrender.com/book/111
 
 ## Usage (HTML Requests for example with Postman)
 
-    Get all: https://rust-sqlx.onrender.com
+    Get all: https://rust-sqlx.onrender.com/books
     Get one: https://rust-sqlx.onrender.com/book/111
 
     Create: POST https://rust-sqlx.onrender.com/create
@@ -16,6 +16,8 @@ Served live at: https://rust-sqlx.onrender.com/book/111
     {"isbn":"999","title":"Rust Rocks Vol. 2","author":"Json Checker","metadata":{"avg_review":10.0,"tags":["cool", "stuff"]}}
 
     Update: PATCH https://rust-sqlx.onrender.com/update/999
+     Add raw json to the body of the request i.e.:
+    {"isbn":"999","title":"Rust Rocks Vol. 3","author":"Json Checker","metadata":{"avg_review":9.0,"tags":["still", "cool"]}}
 
     Delete: DELETE https://rust-sqlx.onrender.com/delete/999
 

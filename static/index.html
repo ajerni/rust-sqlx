@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Rust CRUD API Reference</title>
+    <style>
+      body {
+        font-family: sans-serif;
+        margin: 1.5rem;
+      }
+      h2 {
+        margin-bottom: 1rem;
+      }
+      .method {
+        font-weight: bold;
+        margin-bottom: 0.5rem;
+      }
+      pre {
+        background-color: #f5f5f5;
+        padding: 1rem;
+        border-radius: 5px;
+      }
+
+      .green {
+        color: green;
+      }
+    </style>
+  </head>
+  <body>
+    <h2>
+      Rust CRUD API Reference (use <span class="green">HTML requests</span> with
+      Postman)
+    </h2>
+    <br />
+    <h3>Get All Books</h3>
+    <p class="method">
+      <span class="green">GET</span>
+      <a href="https://rust-sqlx.onrender.com/books"
+        >https://rust-sqlx.onrender.com</a
+      >
+    </p>
+    <h3>Get One Book</h3>
+    <p class="method">
+      <span class="green">GET</span>
+      <a href="https://rust-sqlx.onrender.com/book/111"
+        >https://rust-sqlx.onrender.com/book/111</a
+      >
+    </p>
+    <br />
+    <h3>Create a Book</h3>
+    <p class="method">
+      <span class="green">POST</span>
+      <a href="https://rust-sqlx.onrender.com/create"
+        >https://rust-sqlx.onrender.com/create</a
+      >
+    </p>
+    <pre>
+{"isbn":"999","title":"Rust Rocks Vol. 2","author":"Json Checker","metadata":{"avg_review":10.0,"tags":["cool", "stuff"]}}</pre
+    >
+    <br />
+    <h3>Update a Book</h3>
+    <p class="method">
+      <span class="green">PATCH</span>
+      <a href="https://rust-sqlx.onrender.com/update/999"
+        >https://rust-sqlx.onrender.com/update/999</a
+      >
+    </p>
+    <pre>
+{"isbn":"999","title":"Rust Rocks Vol. 3","author":"Json Checker","metadata":{"avg_review":9.0,"tags":["still", "cool"]}}</pre
+    >
+    <br />
+    <h3>Delete a Book</h3>
+    <p class="method">
+      <span class="green">DELETE</span>
+      <a href="https://rust-sqlx.onrender.com/delete/999"
+        >https://rust-sqlx.onrender.com/delete/999</a
+      >
+    </p>
+  </body>
+</html>

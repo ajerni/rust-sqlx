@@ -13,6 +13,7 @@ dotenv = "0.15.0"
 serde = "1.0.197"
 serde_json = "1.0.114"
 actix-web = "4.5.1"
+actix-files = "0.6.5"
 
 #connect to your Postgrs Server like: cargo run-script connectdb (https://crates.io/crates/cargo-run-script)
 [package.metadata.scripts]

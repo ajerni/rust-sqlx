@@ -1,4 +1,5 @@
 use actix_web::{delete, get, patch, post, web, App, HttpResponse, HttpServer, Responder};
+use actix_files as fs;
 use dotenv::dotenv;
 use serde::{Deserialize, Serialize};
 use sqlx::{types::Json, FromRow, PgPool, Row};
@@ -36,7 +37,7 @@ async fn create(pool: web::Data<PgPool>, book: web::Json<Book>) -> impl Responde
     }
 }
 
-//#[get("/books")]
+#[get("/books")]
 async fn get_all_books(pool: web::Data<PgPool>) -> impl Responder {
     let q = "SELECT isbn, title, author, metadata FROM book";
     let rows = match sqlx::query(q).fetch_all(pool.get_ref()).await {
@@ -208,17 +209,17 @@ async fn main() -> Result<(), Box<dyn Error>> {
     HttpServer::new(move || {
         App::new()
             .app_data(web::Data::new(pool.clone()))
-            .route("/", web::get().to(get_all_books))
             .service(hello)
             .service(create)
-            //.service(get_all_books)
+            .service(get_all_books)
             .service(get_book_by_id)
             .service(update_book)
             .service(delete_book)
             .route("/hey", web::get().to(manual_hello))
+            .service(fs::Files::new("/", "./static").index_file("index.html"))
     })
-    //.bind(("127.0.0.1", 8080))?
-    .bind(("0.0.0.0", 8080))?
+    .bind(("127.0.0.1", 8080))?
+    //.bind(("0.0.0.0", 8080))?
     .run()
     .await?;
 

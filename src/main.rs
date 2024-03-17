@@ -1,5 +1,7 @@
 use actix_web::{delete, get, patch, post, web, App, HttpResponse, HttpServer, Responder};
 use actix_files as fs;
+use actix_cors::Cors;
+use actix_web::http::header;
 use dotenv::dotenv;
 use serde::{Deserialize, Serialize};
 use sqlx::{types::Json, FromRow, PgPool, Row};
@@ -20,6 +22,7 @@ struct Metadata {
     pub tags: Vec<String>,
 }
 
+//FromData struct is used for extractors web::Form and web::Query (params)
 #[derive(Debug, Deserialize)]
 struct FormData {
     isbn: String,
@@ -42,9 +45,9 @@ async fn create(pool: web::Data<PgPool>, book: web::Json<Book>) -> impl Responde
     }
 }
 
-#[post("/get_book_from_form")]
-async fn handle_form(form: web::Form<FormData>, pool: web::Data<PgPool>) -> impl Responder {
-    let isbn = form.isbn.as_str();
+#[get("/param")] //call as param: http://xxx/param?isbn=123 / FormData is a struct that matches the params pattern
+async fn get_book_from_param(info: web::Query<FormData>, pool: web::Data<PgPool>) -> impl Responder {
+    let isbn = info.isbn.as_str();
     match get_book_d(&isbn, &pool).await {
         Ok(Some(book)) => {
             let response_body = format!("Here is the book information retrieved by ISBN {}:\n\n{}", isbn, serde_json::to_string(&book).unwrap());
@@ -53,6 +56,22 @@ async fn handle_form(form: web::Form<FormData>, pool: web::Data<PgPool>) -> impl
         //Ok(Some(book)) => HttpResponse::Ok().json(book),
         Ok(None) => HttpResponse::NotFound().body("Book not found."),
         Err(e) => HttpResponse::InternalServerError().body(format!("Error: {}", e)),
+    }
+}
+
+async fn handle_form(form: web::Form<FormData>, pool: web::Data<PgPool>) -> impl Responder {
+    let isbn = form.isbn.as_str();
+    
+    match get_book_d(&isbn, &pool).await {
+        Ok(Some(book)) => {
+            let response_body = format!("Here is the book information retrieved by ISBN {}:\n\n{}", isbn, serde_json::to_string(&book).unwrap());
+            HttpResponse::Ok().body(response_body)
+          },
+        //Ok(Some(book)) => HttpResponse::Ok().json(book),
+        Ok(None) => HttpResponse::NotFound().body("Book not found."),
+        Err(e) => {
+            dbg!(&isbn);
+            HttpResponse::InternalServerError().body(format!("Error: {}", e))}
     }
 }
 
@@ -230,20 +249,32 @@ async fn main() -> Result<(), Box<dyn Error>> {
     let pool = sqlx::postgres::PgPool::connect(&url.as_str()).await?;
 
     HttpServer::new(move || {
+        let cors = Cors::default()
+              .allowed_origin("localhost:8080")
+              .allowed_origin("https://rust-sqlx.onrender.com")
+              .allowed_origin_fn(|origin, _req_head| {
+                  origin.as_bytes().ends_with(b".onrender.com")
+              })
+              .allowed_methods(vec!["GET", "POST", "PATCH", "DELETE"])
+              .allowed_headers(vec![header::AUTHORIZATION, header::ACCEPT])
+              .allowed_header(header::CONTENT_TYPE)
+              .max_age(3600);
         App::new()
+            .wrap(cors)
             .app_data(web::Data::new(pool.clone()))
             .service(hello)
             .service(create)
             .service(get_all_books)
             .service(get_book_by_id)
-            .service(handle_form)
+            .route("/form-handler", web::post().to(handle_form))
+            .service(get_book_from_param)
             .service(update_book)
             .service(delete_book)
             .route("/hey", web::get().to(manual_hello))
             .service(fs::Files::new("/other", "./static").index_file("other.html"))
             .service(fs::Files::new("/", "./static").index_file("index.html"))
     })
-    //.bind(("127.0.0.1", 8080))?
+    //.bind(("127.0.0.1", 8080))? // 0.0.0.0 needed on render.com, works also as localhost
     .bind(("0.0.0.0", 8080))?
     .run()
     .await?;

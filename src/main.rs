@@ -64,7 +64,11 @@ async fn get_all_books(pool: web::Data<PgPool>) -> impl Responder {
 async fn get_book_by_id(pool: web::Data<PgPool>, path: web::Path<(String,)>) -> impl Responder {
     let isbn = path.into_inner().0;
     match get_book_d(&isbn, &pool).await {
-        Ok(Some(book)) => HttpResponse::Ok().json(book),
+        Ok(Some(book)) => {
+            let response_body = format!("Here is the book information retrieved by ISBN {}:\n\n{}", isbn, serde_json::to_string(&book).unwrap());
+            HttpResponse::Ok().body(response_body)
+          },
+        //Ok(Some(book)) => HttpResponse::Ok().json(book),
         Ok(None) => HttpResponse::NotFound().body("Book not found."),
         Err(e) => HttpResponse::InternalServerError().body(format!("Error: {}", e)),
     }

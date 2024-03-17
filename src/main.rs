@@ -20,6 +20,11 @@ struct Metadata {
     pub tags: Vec<String>,
 }
 
+#[derive(Debug, Deserialize)]
+struct FormData {
+    isbn: String,
+}
+
 #[get("/hello")]
 async fn hello() -> impl Responder {
     HttpResponse::Ok().body("Hello world!")
@@ -33,6 +38,20 @@ async fn manual_hello() -> impl Responder {
 async fn create(pool: web::Data<PgPool>, book: web::Json<Book>) -> impl Responder {
     match create_d(&book, &pool).await {
         Ok(message) => HttpResponse::Ok().body(message),
+        Err(e) => HttpResponse::InternalServerError().body(format!("Error: {}", e)),
+    }
+}
+
+#[post("/get_book_from_form")]
+async fn handle_form(form: web::Form<FormData>, pool: web::Data<PgPool>) -> impl Responder {
+    let isbn = form.isbn.as_str();
+    match get_book_d(&isbn, &pool).await {
+        Ok(Some(book)) => {
+            let response_body = format!("Here is the book information retrieved by ISBN {}:\n\n{}", isbn, serde_json::to_string(&book).unwrap());
+            HttpResponse::Ok().body(response_body)
+          },
+        //Ok(Some(book)) => HttpResponse::Ok().json(book),
+        Ok(None) => HttpResponse::NotFound().body("Book not found."),
         Err(e) => HttpResponse::InternalServerError().body(format!("Error: {}", e)),
     }
 }
@@ -217,14 +236,15 @@ async fn main() -> Result<(), Box<dyn Error>> {
             .service(create)
             .service(get_all_books)
             .service(get_book_by_id)
+            .service(handle_form)
             .service(update_book)
             .service(delete_book)
             .route("/hey", web::get().to(manual_hello))
             .service(fs::Files::new("/other", "./static").index_file("other.html"))
             .service(fs::Files::new("/", "./static").index_file("index.html"))
     })
-    //.bind(("127.0.0.1", 8080))?
-    .bind(("0.0.0.0", 8080))?
+    .bind(("127.0.0.1", 8080))?
+    //.bind(("0.0.0.0", 8080))?
     .run()
     .await?;
 

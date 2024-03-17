@@ -217,6 +217,7 @@ async fn main() -> Result<(), Box<dyn Error>> {
             .service(delete_book)
             .route("/hey", web::get().to(manual_hello))
             .service(fs::Files::new("/", "./static").index_file("index.html"))
+            .service(fs::Files::new("/other", "./static").index_file("other.html"))
     })
     .bind(("127.0.0.1", 8080))?
     //.bind(("0.0.0.0", 8080))?

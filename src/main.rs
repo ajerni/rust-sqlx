@@ -1,18 +1,27 @@
-use actix_web::{get, post, delete, patch, web, App, HttpResponse, HttpServer, Responder};
+use actix_web::{delete, get, patch, post, web, App, HttpResponse, HttpServer, Responder};
 use dotenv::dotenv;
 use serde::{Deserialize, Serialize};
 use sqlx::{types::Json, FromRow, PgPool, Row};
 use std::env;
 use std::error::Error;
 
-#[get("/")]
-async fn hello() -> impl Responder {
-    HttpResponse::Ok().body("Hello world!")
+#[derive(Debug, FromRow, Clone, Serialize, Deserialize)]
+struct Book {
+    pub isbn: String,
+    pub title: String,
+    pub author: String,
+    pub metadata: Option<Json<Metadata>>,
 }
 
-#[post("/echo")]
-async fn echo(req_body: String) -> impl Responder {
-    HttpResponse::Ok().body(req_body)
+#[derive(Debug, Serialize, Deserialize, Clone)]
+struct Metadata {
+    pub avg_review: f32,
+    pub tags: Vec<String>,
+}
+
+#[get("/hello")]
+async fn hello() -> impl Responder {
+    HttpResponse::Ok().body("Hello world!")
 }
 
 async fn manual_hello() -> impl Responder {
@@ -27,7 +36,7 @@ async fn create(pool: web::Data<PgPool>, book: web::Json<Book>) -> impl Responde
     }
 }
 
-#[get("/books")]
+//#[get("/books")]
 async fn get_all_books(pool: web::Data<PgPool>) -> impl Responder {
     let q = "SELECT isbn, title, author, metadata FROM book";
     let rows = match sqlx::query(q).fetch_all(pool.get_ref()).await {
@@ -61,19 +70,25 @@ async fn get_book_by_id(pool: web::Data<PgPool>, path: web::Path<(String,)>) -> 
 }
 
 #[patch("/update/{isbn}")]
-async fn update_book(pool: web::Data<PgPool>, path: web::Path<(String,)>, new_book: web::Json<Book>) -> impl Responder {
+async fn update_book(
+    pool: web::Data<PgPool>,
+    path: web::Path<(String,)>,
+    new_book: web::Json<Book>,
+) -> impl Responder {
     let isbn = path.into_inner().0;
     match get_book_d(&isbn, &pool).await {
         Ok(Some(mut book)) => {
             book.title = new_book.title.clone();
             book.author = new_book.author.clone();
             book.metadata = new_book.metadata.clone();
-            
+
             match update_d(&book, &pool).await {
                 Ok(_) => HttpResponse::Ok().body("Book updated successfully."),
-                Err(e) => HttpResponse::InternalServerError().body(format!("Error updating book: {}", e)),
+                Err(e) => {
+                    HttpResponse::InternalServerError().body(format!("Error updating book: {}", e))
+                }
             }
-        },
+        }
         Ok(None) => HttpResponse::NotFound().body("Book not found"),
         Err(e) => HttpResponse::InternalServerError().body(format!("Error: {}", e)),
     }
@@ -86,20 +101,6 @@ async fn delete_book(pool: web::Data<PgPool>, path: web::Path<(String,)>) -> imp
         Ok(_) => HttpResponse::Ok().body("Book deleted successfully."),
         Err(e) => HttpResponse::InternalServerError().body(format!("Error deleting book: {}", e)),
     }
-}
-
-#[derive(Debug, FromRow, Clone, Serialize, Deserialize)]
-struct Book {
-    pub isbn: String,
-    pub title: String,
-    pub author: String,
-    pub metadata: Option<Json<Metadata>>,
-}
-
-#[derive(Debug, Serialize, Deserialize, Clone)]
-struct Metadata {
-    pub avg_review: f32,
-    pub tags: Vec<String>,
 }
 
 // The following methods (_d for direct) are also for direct use with sqlx / all off them are
@@ -204,13 +205,13 @@ async fn main() -> Result<(), Box<dyn Error>> {
     let url = env::var("DATABASE_URL").expect("DATABASE_URL must be set in .env");
     let pool = sqlx::postgres::PgPool::connect(&url.as_str()).await?;
 
-    HttpServer::new(move|| {
+    HttpServer::new(move || {
         App::new()
             .app_data(web::Data::new(pool.clone()))
+            .route("/", web::get().to(get_all_books))
             .service(hello)
-            .service(echo)
             .service(create)
-            .service(get_all_books)
+            //.service(get_all_books)
             .service(get_book_by_id)
             .service(update_book)
             .service(delete_book)

@@ -4,7 +4,7 @@ This project demonstrates a simple PostgreSQL database 💾 application written 
 
 CRUD operations for your daily needs are covered 😊
 
-Served live at: https://rust-sqlx.onrender.com/book/111
+Served live at: https://rust-sqlx.onrender.com
 
 ## Usage (HTML Requests for example with Postman)
 

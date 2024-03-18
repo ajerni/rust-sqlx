@@ -1,7 +1,7 @@
-use actix_web::{delete, get, patch, post, web, App, HttpResponse, HttpServer, Responder};
-use actix_files as fs;
 use actix_cors::Cors;
+use actix_files as fs;
 use actix_web::http::header;
+use actix_web::{delete, get, patch, post, web, App, HttpResponse, HttpServer, Responder};
 use dotenv::dotenv;
 use serde::{Deserialize, Serialize};
 use sqlx::{types::Json, FromRow, PgPool, Row};
@@ -46,13 +46,20 @@ async fn create(pool: web::Data<PgPool>, book: web::Json<Book>) -> impl Responde
 }
 
 #[get("/param")] //call as param: http://xxx/param?isbn=123 / FormData is a struct that matches the params pattern
-async fn get_book_from_param(info: web::Query<FormData>, pool: web::Data<PgPool>) -> impl Responder {
+async fn get_book_from_param(
+    info: web::Query<FormData>,
+    pool: web::Data<PgPool>,
+) -> impl Responder {
     let isbn = info.isbn.as_str();
-    match get_book_d(&isbn, &pool).await {
+    match get_book_d(isbn, &pool).await {
         Ok(Some(book)) => {
-            let response_body = format!("Here is the book information retrieved by ISBN {}:\n\n{}", isbn, serde_json::to_string(&book).unwrap());
+            let response_body = format!(
+                "Here is the book information retrieved by ISBN {}:\n\n{}",
+                isbn,
+                serde_json::to_string(&book).unwrap()
+            );
             HttpResponse::Ok().body(response_body)
-          },
+        }
         //Ok(Some(book)) => HttpResponse::Ok().json(book),
         Ok(None) => HttpResponse::NotFound().body("Book not found."),
         Err(e) => HttpResponse::InternalServerError().body(format!("Error: {}", e)),
@@ -61,17 +68,22 @@ async fn get_book_from_param(info: web::Query<FormData>, pool: web::Data<PgPool>
 
 async fn handle_form(form: web::Form<FormData>, pool: web::Data<PgPool>) -> impl Responder {
     let isbn = form.isbn.as_str();
-    
-    match get_book_d(&isbn, &pool).await {
+
+    match get_book_d(isbn, &pool).await {
         Ok(Some(book)) => {
-            let response_body = format!("Here is the book information retrieved by ISBN {}:\n\n{}", isbn, serde_json::to_string(&book).unwrap());
+            let response_body = format!(
+                "Here is the book information retrieved by ISBN {}:\n\n{}",
+                isbn,
+                serde_json::to_string(&book).unwrap()
+            );
             HttpResponse::Ok().body(response_body)
-          },
+        }
         //Ok(Some(book)) => HttpResponse::Ok().json(book),
         Ok(None) => HttpResponse::NotFound().body("Book not found."),
         Err(e) => {
             dbg!(&isbn);
-            HttpResponse::InternalServerError().body(format!("Error: {}", e))}
+            HttpResponse::InternalServerError().body(format!("Error: {}", e))
+        }
     }
 }
 
@@ -103,9 +115,13 @@ async fn get_book_by_id(pool: web::Data<PgPool>, path: web::Path<(String,)>) -> 
     let isbn = path.into_inner().0;
     match get_book_d(&isbn, &pool).await {
         Ok(Some(book)) => {
-            let response_body = format!("Here is the book information retrieved by ISBN {}:\n\n{}", isbn, serde_json::to_string(&book).unwrap());
+            let response_body = format!(
+                "Here is the book information retrieved by ISBN {}:\n\n{}",
+                isbn,
+                serde_json::to_string(&book).unwrap()
+            );
             HttpResponse::Ok().body(response_body)
-          },
+        }
         //Ok(Some(book)) => HttpResponse::Ok().json(book),
         Ok(None) => HttpResponse::NotFound().body("Book not found."),
         Err(e) => HttpResponse::InternalServerError().body(format!("Error: {}", e)),
@@ -183,6 +199,7 @@ async fn get_book_d(isbn: &str, pool: &sqlx::PgPool) -> Result<Option<Book>, Box
     Ok(book)
 }
 
+#[allow(dead_code)]
 async fn get_all_books_d(pool: &sqlx::PgPool) -> Result<Vec<Book>, Box<dyn Error>> {
     let q = "SELECT isbn, title, author, metadata FROM book";
     let rows = sqlx::query(q).fetch_all(pool).await?;
@@ -200,6 +217,7 @@ async fn get_all_books_d(pool: &sqlx::PgPool) -> Result<Vec<Book>, Box<dyn Error
     Ok(books)
 }
 
+#[allow(dead_code)]
 async fn get_books_by_author_d(
     author: &str,
     pool: &sqlx::PgPool,
@@ -246,19 +264,17 @@ async fn delete_d(isbn: &str, pool: &sqlx::PgPool) -> Result<(), Box<dyn Error>>
 async fn main() -> Result<(), Box<dyn Error>> {
     dotenv().ok();
     let url = env::var("DATABASE_URL").expect("DATABASE_URL must be set in .env");
-    let pool = sqlx::postgres::PgPool::connect(&url.as_str()).await?;
+    let pool = sqlx::postgres::PgPool::connect(url.as_str()).await?;
 
     HttpServer::new(move || {
         let cors = Cors::default()
-              .allowed_origin("localhost:8080")
-              .allowed_origin("https://rust-sqlx.onrender.com")
-              .allowed_origin_fn(|origin, _req_head| {
-                  origin.as_bytes().ends_with(b".onrender.com")
-              })
-              .allowed_methods(vec!["GET", "POST", "PATCH", "DELETE"])
-              .allowed_headers(vec![header::AUTHORIZATION, header::ACCEPT])
-              .allowed_header(header::CONTENT_TYPE)
-              .max_age(3600);
+            .allowed_origin("localhost:8080")
+            .allowed_origin("https://rust-sqlx.onrender.com")
+            .allowed_origin_fn(|origin, _req_head| origin.as_bytes().ends_with(b".onrender.com"))
+            .allowed_methods(vec!["GET", "POST", "PATCH", "DELETE"])
+            .allowed_headers(vec![header::AUTHORIZATION, header::ACCEPT])
+            .allowed_header(header::CONTENT_TYPE)
+            .max_age(3600);
         App::new()
             .wrap(cors)
             .app_data(web::Data::new(pool.clone()))

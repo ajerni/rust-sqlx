@@ -281,6 +281,8 @@ async fn main() -> Result<(), Box<dyn Error>> {
             .allowed_origin("localhost:8080")
             .allowed_origin("https://rust-sqlx.onrender.com")
             .allowed_origin_fn(|origin, _req_head| origin.as_bytes().ends_with(b".onrender.com"))
+            .allowed_origin("https://bevy.andierni.ch")
+            .allowed_origin_fn(|origin, _req_head| origin.as_bytes().ends_with(b".andierni.ch"))
             .allowed_methods(vec!["GET", "POST", "PATCH", "DELETE"])
             .allowed_headers(vec![header::AUTHORIZATION, header::ACCEPT])
             .allowed_header(header::CONTENT_TYPE)

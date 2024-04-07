@@ -22,7 +22,7 @@ struct Metadata {
     pub tags: Vec<String>,
 }
 
-//FromData struct is used for extractors web::Form and web::Query (params)
+/// FromData struct is used for extractors web::Form and web::Query (params)
 #[derive(Debug, Deserialize)]
 struct FormData {
     isbn: String,
@@ -123,6 +123,16 @@ async fn get_book_by_id(pool: web::Data<PgPool>, path: web::Path<(String,)>) -> 
             HttpResponse::Ok().body(response_body)
         }
         //Ok(Some(book)) => HttpResponse::Ok().json(book),
+        Ok(None) => HttpResponse::NotFound().body("Book not found."),
+        Err(e) => HttpResponse::InternalServerError().body(format!("Error: {}", e)),
+    }
+}
+
+#[get("/bookjson/{isbn}")]
+async fn get_book_by_id_json(pool: web::Data<PgPool>, path: web::Path<(String,)>) -> impl Responder {
+    let isbn = path.into_inner().0;
+    match get_book_d(&isbn, &pool).await {
+        Ok(Some(book)) => HttpResponse::Ok().body(serde_json::to_string(&book).unwrap()),
         Ok(None) => HttpResponse::NotFound().body("Book not found."),
         Err(e) => HttpResponse::InternalServerError().body(format!("Error: {}", e)),
     }
@@ -282,6 +292,7 @@ async fn main() -> Result<(), Box<dyn Error>> {
             .service(create)
             .service(get_all_books)
             .service(get_book_by_id)
+            .service(get_book_by_id_json)
             .route("/form-handler", web::post().to(handle_form))
             .service(get_book_from_param)
             .service(update_book)

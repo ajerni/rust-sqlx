@@ -129,7 +129,10 @@ async fn get_book_by_id(pool: web::Data<PgPool>, path: web::Path<(String,)>) -> 
 }
 
 #[get("/bookjson/{isbn}")]
-async fn get_book_by_id_json(pool: web::Data<PgPool>, path: web::Path<(String,)>) -> impl Responder {
+async fn get_book_by_id_json(
+    pool: web::Data<PgPool>,
+    path: web::Path<(String,)>,
+) -> impl Responder {
     let isbn = path.into_inner().0;
     match get_book_d(&isbn, &pool).await {
         Ok(Some(book)) => HttpResponse::Ok().body(serde_json::to_string(&book).unwrap()),
@@ -270,6 +273,18 @@ async fn delete_d(isbn: &str, pool: &sqlx::PgPool) -> Result<(), Box<dyn Error>>
     Ok(())
 }
 
+// this is a separate new section to test htmx
+
+#[get("/htmxtest")]
+async fn htmxtest() -> impl Responder {
+    HttpResponse::Ok().body("
+    <h1>I should be bolder...</h1>
+    <p>...than this paragraph</p>
+    ")
+}
+
+// here is the Actix server itself:
+
 #[actix_web::main]
 async fn main() -> Result<(), Box<dyn Error>> {
     dotenv().ok();
@@ -278,7 +293,7 @@ async fn main() -> Result<(), Box<dyn Error>> {
 
     HttpServer::new(move || {
         let cors = Cors::default()
-            .allowed_origin("localhost:8080")
+            .allowed_origin("http://localhost:8080")
             .allowed_origin("https://rust-sqlx.onrender.com")
             .allowed_origin_fn(|origin, _req_head| origin.as_bytes().ends_with(b".onrender.com"))
             .allowed_origin("https://bevy.andierni.ch")
@@ -291,6 +306,7 @@ async fn main() -> Result<(), Box<dyn Error>> {
             .wrap(cors)
             .app_data(web::Data::new(pool.clone()))
             .service(hello)
+            .service(htmxtest)
             .service(create)
             .service(get_all_books)
             .service(get_book_by_id)
@@ -303,7 +319,7 @@ async fn main() -> Result<(), Box<dyn Error>> {
             .service(fs::Files::new("/other", "./static").index_file("other.html"))
             .service(fs::Files::new("/htmx", "./static").index_file("htmx.html"))
             .service(fs::Files::new("/", "./static").index_file("index.html"))
-            
+           
     })
     //.bind(("127.0.0.1", 8080))? // 0.0.0.0 needed on render.com, works also as localhost
     .bind(("0.0.0.0", 8080))?

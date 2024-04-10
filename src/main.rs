@@ -301,7 +301,9 @@ async fn main() -> Result<(), Box<dyn Error>> {
             .service(delete_book)
             .route("/hey", web::get().to(manual_hello))
             .service(fs::Files::new("/other", "./static").index_file("other.html"))
+            .service(fs::Files::new("/htmx", "./static").index_file("htmx.html"))
             .service(fs::Files::new("/", "./static").index_file("index.html"))
+            
     })
     //.bind(("127.0.0.1", 8080))? // 0.0.0.0 needed on render.com, works also as localhost
     .bind(("0.0.0.0", 8080))?

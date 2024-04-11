@@ -299,7 +299,7 @@ async fn main() -> Result<(), Box<dyn Error>> {
             .allowed_origin("https://bevy.andierni.ch")
             .allowed_origin("https://htmx.andierni.ch")
             .allowed_origin_fn(|origin, _req_head| origin.as_bytes().ends_with(b".andierni.ch"))
-            .allowed_methods(vec!["GET", "POST", "PATCH", "DELETE"])
+            .allowed_methods(vec!["GET", "POST", "PATCH", "DELETE", "OPTIONS"])
             .allowed_headers(vec![header::AUTHORIZATION, header::ACCEPT, header::ACCESS_CONTROL_ALLOW_ORIGIN])
             .allowed_header(header::CONTENT_TYPE)
             .max_age(3600);

@@ -39,7 +39,27 @@
           <button>Search book</button>
         </p>
       </form>
+      <br />
+      <h3>Updating the Bevy Game Highscore</h3>
+      <a href="https://github.com/ajerni/rust-bevy">see github repo</a>
+      <form
+        hx-patch="https://rust-sqlx.onrender.com/updatehighscore"
+        hx-target="#myupdateresult"
+      >
+        <p>
+          <label for="name">Name:</label>
+          <input type="text" id="name" name="name" />
+        </p>
+        <p>
+          <label for="highscore">Highscore:</label>
+          <input type="text" id="highscore" name="highscore" />
+        </p>
+        <p>
+          <button>Update Highscore</button>
+        </p>
+      </form>
       <div id="mytargetdiv"></div>
+      <div id="myupdateresult"></div>
     </main>
   </body>
 </html>

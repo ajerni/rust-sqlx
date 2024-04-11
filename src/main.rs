@@ -277,11 +277,40 @@ async fn delete_d(isbn: &str, pool: &sqlx::PgPool) -> Result<(), Box<dyn Error>>
 
 #[get("/htmxtest")]
 async fn htmxtest() -> impl Responder {
-    HttpResponse::Ok().body("
+    HttpResponse::Ok().body(
+        "
     <h2>I am HTML returned from the server...</h2>
     <p>...demonstrating the use of htmx in the frontend...</p>
     <p>...accessing an Actix webserver as the backend...</p>
-    ")
+    ",
+    )
+}
+
+#[derive(Debug, Deserialize)]
+struct FormDataScoreUpdate {
+    name: String,
+    highscore: String,
+}
+
+#[patch("/updatehighscore")]
+async fn update_highscore(
+    pool: web::Data<PgPool>,
+    form: web::Form<FormDataScoreUpdate>,
+) -> impl Responder {
+    let book_new_highscore = Book {
+        isbn: "9901".to_string(), // 9901 is used in the Bevy Game to store the highscore
+        title: "Bevy highscore".to_string(),
+        author: "updated via htmx".to_string(),
+        metadata: Some(Json(Metadata {
+            avg_review: 6.0,
+            tags: vec![form.name.to_string(), form.highscore.to_string()],
+        })),
+    };
+
+    match update_d(&book_new_highscore, &pool).await {
+        Ok(_) => HttpResponse::Ok().body("Book updated successfully."),
+        Err(e) => HttpResponse::InternalServerError().body(format!("Error updating book: {}", e)),
+    }
 }
 
 // here is the Actix server itself:
@@ -301,7 +330,11 @@ async fn main() -> Result<(), Box<dyn Error>> {
             .allowed_origin("https://htmx.andierni.ch")
             .allowed_origin_fn(|origin, _req_head| origin.as_bytes().ends_with(b".andierni.ch"))
             .allowed_methods(vec!["GET", "POST", "PATCH", "DELETE", "OPTIONS"])
-            .allowed_headers(vec![header::AUTHORIZATION, header::ACCEPT, header::ACCESS_CONTROL_ALLOW_ORIGIN])
+            .allowed_headers(vec![
+                header::AUTHORIZATION,
+                header::ACCEPT,
+                header::ACCESS_CONTROL_ALLOW_ORIGIN,
+            ])
             .allowed_header(header::CONTENT_TYPE)
             .allow_any_header()
             .allow_any_method()
@@ -312,6 +345,7 @@ async fn main() -> Result<(), Box<dyn Error>> {
             .app_data(web::Data::new(pool.clone()))
             .service(hello)
             .service(htmxtest)
+            .service(update_highscore)
             .service(create)
             .service(get_all_books)
             .service(get_book_by_id)
@@ -324,7 +358,6 @@ async fn main() -> Result<(), Box<dyn Error>> {
             .service(fs::Files::new("/other", "./static").index_file("other.html"))
             .service(fs::Files::new("/htmx", "./static").index_file("htmx.html"))
             .service(fs::Files::new("/", "./static").index_file("index.html"))
-           
     })
     //.bind(("127.0.0.1", 8080))? // 0.0.0.0 needed on render.com, works also as localhost
     .bind(("0.0.0.0", 8080))?

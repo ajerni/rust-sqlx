@@ -17,21 +17,14 @@
     </header>
     <main>
       <p>
-        HTMX is a JavaScript library that you use without writing JavaScript
-        code. Nice.
+        HTMX test with backend running at rust-sqlx.onrender.com
+        <a href="https://github.com/ajerni/rust-sqlx">see Github repo</a>
       </p>
       <button
         hx-get="https://rust-sqlx.onrender.com/htmxtest"
         hx-swap="outerHTML"
       >
-        Learn More
-      </button>
-      <p>And here comes some data from the DB:</p>
-      <button
-        hx-get="https://rust-sqlx.onrender.com//htmxtest"
-        hx-swap="outerHTML"
-      >
-        Learn More
+        Get something
       </button>
       <br />
       <form
@@ -40,7 +33,7 @@
       >
         <p>
           <label for="isbn">Get book:</label>
-          <input type="text" id="isbn" name="isbn" />
+          <input type="text" placeholder="111" id="isbn" name="isbn" />
         </p>
         <p>
           <button>Search book</button>

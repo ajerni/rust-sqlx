@@ -278,8 +278,9 @@ async fn delete_d(isbn: &str, pool: &sqlx::PgPool) -> Result<(), Box<dyn Error>>
 #[get("/htmxtest")]
 async fn htmxtest() -> impl Responder {
     HttpResponse::Ok().body("
-    <h1>I am HTML returned from the server...</h1>
-    <p>...demonstrating the use of htmx.</p>
+    <h2>I am HTML returned from the server...</h2>
+    <p>...demonstrating the use of htmx in the frontend...</p>
+    <p>...accessing an Actix webserver as the backend...</p>
     ")
 }
 

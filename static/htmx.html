@@ -34,7 +34,10 @@
         Learn More
       </button>
       <br />
-      <form hx-post="https://rust-sqlx.onrender.com/form-handler">
+      <form
+        hx-post="https://rust-sqlx.onrender.com/form-handler"
+        hx-target="#mytargetdiv"
+      >
         <p>
           <label for="isbn">Get book:</label>
           <input type="text" id="isbn" name="isbn" />
@@ -43,6 +46,7 @@
           <button>Search book</button>
         </p>
       </form>
+      <div id="mytargetdiv"></div>
     </main>
   </body>
 </html>

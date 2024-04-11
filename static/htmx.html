@@ -26,22 +26,22 @@
       >
         Get something
       </button>
-      <br />
       <form
         hx-post="https://rust-sqlx.onrender.com/form-handler"
         hx-target="#mytargetdiv"
       >
         <p>
           <label for="isbn">Get book:</label>
-          <input type="text" placeholder="111" id="isbn" name="isbn" />
+          <input type="text" placeholder="9901" id="isbn" name="isbn" />
         </p>
         <p>
           <button>Search book</button>
         </p>
       </form>
+      <div id="mytargetdiv"></div>
       <br />
       <h3>Updating the Bevy Game Highscore</h3>
-      <a href="https://github.com/ajerni/rust-bevy">see github repo</a>
+      <a href="https://github.com/ajerni/rust-bevy">see Github repo</a>
       <form
         hx-patch="https://rust-sqlx.onrender.com/updatehighscore"
         hx-target="#myupdateresult"
@@ -58,7 +58,7 @@
           <button>Update Highscore</button>
         </p>
       </form>
-      <div id="mytargetdiv"></div>
+
       <div id="myupdateresult"></div>
     </main>
   </body>

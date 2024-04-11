@@ -302,6 +302,9 @@ async fn main() -> Result<(), Box<dyn Error>> {
             .allowed_methods(vec!["GET", "POST", "PATCH", "DELETE", "OPTIONS"])
             .allowed_headers(vec![header::AUTHORIZATION, header::ACCEPT, header::ACCESS_CONTROL_ALLOW_ORIGIN])
             .allowed_header(header::CONTENT_TYPE)
+            .allow_any_header()
+            .allow_any_method()
+            .expose_any_header()
             .max_age(3600);
         App::new()
             .wrap(cors)

@@ -15,13 +15,34 @@
       <img src="/htmx-logo.jpg" alt="HTMX Logo" />
       <h1>Essentials</h1>
     </header>
-
     <main>
       <p>
         HTMX is a JavaScript library that you use without writing JavaScript
         code. Nice.
       </p>
-      <button hx-get="/htmxtest" hx-swap="outerHTML">Learn More</button>
+      <button
+        hx-get="https://rust-sqlx.onrender.com/htmxtest"
+        hx-swap="outerHTML"
+      >
+        Learn More
+      </button>
+      <p>And here comes some data from the DB:</p>
+      <button
+        hx-get="https://rust-sqlx.onrender.com//htmxtest"
+        hx-swap="outerHTML"
+      >
+        Learn More
+      </button>
+      <br />
+      <form hx-post="https://rust-sqlx.onrender.com/form-handler">
+        <p>
+          <label for="getbook">Get book:</label>
+          <input type="text" id="getbook" name="getbook" />
+        </p>
+        <p>
+          <button>Search book</button>
+        </p>
+      </form>
     </main>
   </body>
 </html>

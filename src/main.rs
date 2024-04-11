@@ -278,8 +278,8 @@ async fn delete_d(isbn: &str, pool: &sqlx::PgPool) -> Result<(), Box<dyn Error>>
 #[get("/htmxtest")]
 async fn htmxtest() -> impl Responder {
     HttpResponse::Ok().body("
-    <h1>I should be bolder...</h1>
-    <p>...than this paragraph</p>
+    <h1>I am HTML returned from the server...</h1>
+    <p>...demonstrating the use of htmx.</p>
     ")
 }
 
@@ -297,6 +297,7 @@ async fn main() -> Result<(), Box<dyn Error>> {
             .allowed_origin("https://rust-sqlx.onrender.com")
             .allowed_origin_fn(|origin, _req_head| origin.as_bytes().ends_with(b".onrender.com"))
             .allowed_origin("https://bevy.andierni.ch")
+            .allowed_origin("https://htmx.andierni.ch/")
             .allowed_origin_fn(|origin, _req_head| origin.as_bytes().ends_with(b".andierni.ch"))
             .allowed_methods(vec!["GET", "POST", "PATCH", "DELETE"])
             .allowed_headers(vec![header::AUTHORIZATION, header::ACCEPT])

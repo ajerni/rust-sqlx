@@ -26,3 +26,6 @@ Make sure to have a `.env` file on the top level of your projects path containin
 
 It's based on the tutorial available here:
 https://www.youtube.com/watch?v=TCERYbgvbq0 by Dream of Code.
+
+I have also added a htmx frontend example under:
+https://rust-sqlx.onrender.com/htmx and https://htmx.andierni.ch

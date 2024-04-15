@@ -289,6 +289,8 @@ async fn htmxtest() -> impl Responder {
     )
 }
 
+// this is to manually update the highscore data of my Bevy game (bevy.andierni.ch)
+
 #[derive(Debug, Deserialize)]
 struct FormDataScoreUpdate {
     name: String,
@@ -316,7 +318,7 @@ async fn update_highscore(
     }
 }
 
-// other unrelated test ot show that just anything can be done on the server:
+// other unrelated endpoint test to show that just anything can be done on the server:
 
 #[get("/addfive/{number}")]
 async fn addfive(path: web::Path<(String,)>) -> impl Responder {
@@ -331,14 +333,14 @@ async fn addfive(path: web::Path<(String,)>) -> impl Responder {
     }
 }
 
-// llm / ChatGPT test
+// llm-chaon / ChatGPT demo
 #[derive(Debug, Deserialize)]
 struct AIInput {
     city: String,
     country: String,
 }
 
-// call with params like: http://localhost:8080/ai?city=Stockholm&country=Sweden
+// call with query params like: http://localhost:8080/ai?city=Stockholm&country=Sweden
 #[get("/ai")]
 async fn ai_get(params: web::Query<AIInput>) -> HttpResponse {
     let city = params.city.to_string();
@@ -348,7 +350,6 @@ async fn ai_get(params: web::Query<AIInput>) -> HttpResponse {
 
     let response = run_llm_chain(city, country).await;
     
-
     match response {
         Ok(result) => {
             let final_res = result[11..].to_string(); //removing the leading text 'Assistant:'
@@ -357,7 +358,7 @@ async fn ai_get(params: web::Query<AIInput>) -> HttpResponse {
     }
 }
 
-// call with params like: http://localhost:8080/ai?city=Stockholm&country=Sweden
+// call with 'params' taken from frontent form
 #[post("/ai")]
 async fn ai_post(params: web::Form<AIInput>) -> HttpResponse {
     let city = params.city.to_string();
@@ -367,7 +368,6 @@ async fn ai_post(params: web::Form<AIInput>) -> HttpResponse {
 
     let response = run_llm_chain(city, country).await;
     
-
     match response {
         Ok(result) => {
             let final_res = result[11..].to_string(); //removing the leading text 'Assistant:'

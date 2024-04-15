@@ -340,7 +340,26 @@ struct AIInput {
 
 // call with params like: http://localhost:8080/ai?city=Stockholm&country=Sweden
 #[get("/ai")]
-async fn ai(params: web::Query<AIInput>) -> HttpResponse {
+async fn ai_get(params: web::Query<AIInput>) -> HttpResponse {
+    let city = params.city.to_string();
+    let country = params.country.to_string();
+
+    println!("Received via params --> City: {} / Country: {}", city, country);
+
+    let response = run_llm_chain(city, country).await;
+    
+
+    match response {
+        Ok(result) => {
+            let final_res = result[11..].to_string(); //removing the leading text 'Assistant:'
+            HttpResponse::Ok().body(final_res)},
+        Err(e) => {HttpResponse::InternalServerError().body(format!("Error from AI: {}", e))}
+    }
+}
+
+// call with params like: http://localhost:8080/ai?city=Stockholm&country=Sweden
+#[post("/ai")]
+async fn ai_post(params: web::Form<AIInput>) -> HttpResponse {
     let city = params.city.to_string();
     let country = params.country.to_string();
 
@@ -392,7 +411,8 @@ async fn main() -> Result<(), Box<dyn Error>> {
             .service(htmxtest)
             .service(update_highscore)
             .service(addfive)
-            .service(ai)
+            .service(ai_get)
+            .service(ai_post)
             .service(create)
             .service(get_all_books)
             .service(get_book_by_id)

@@ -1,0 +1,15 @@
+psql guide:
+
+Show databases: \l
+Show tables: \dt
+describb tabel: \d tablename
+
+And any SQL statements like: SELECT * FROM testtable; /  ALTER TABLE testtable ADD score INT; /
+UPDATE testtable  SET score = 10 WHERE name = '1'; SELECT * FROM testtable WHERE score > 50;
+
+JSON search example:
+INSERT INTO testtable (name, data) VALUES ('5', '{"score":"10", "age":"47", "Ort":"Adliswil"}');
+SELECT name FROM testtable WHERE data->>'age' = '47';
+
+Save db to csv file:
+\COPY (SELECT * FROM testtable) TO '/Users/Andi/temp/datatest.csv' WITH (FORMAT CSV, HEADER);

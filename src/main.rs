@@ -8,6 +8,9 @@ use sqlx::{types::Json, FromRow, PgPool, Row};
 use std::env;
 use std::error::Error;
 
+mod llm_chain;
+use crate::llm_chain::run_llm_chain;
+
 #[derive(Debug, FromRow, Clone, Serialize, Deserialize)]
 struct Book {
     pub isbn: String,
@@ -313,6 +316,48 @@ async fn update_highscore(
     }
 }
 
+// other unrelated test ot show that just anything can be done on the server:
+
+#[get("/addfive/{number}")]
+async fn addfive(path: web::Path<(String,)>) -> impl Responder {
+    let number = path.into_inner().0.parse::<u8>(); // Parse the string into a u8
+    // Check if parsing was successful
+    if let Ok(number) = number {
+        let r = number + 5;
+        HttpResponse::Ok().body(format!("Result: {}", r))
+    } else {
+        // Handle parsing error here, e.g. return BadRequest
+        HttpResponse::BadRequest().body("Invalid number format")
+    }
+}
+
+// llm / ChatGPT test
+#[derive(Debug, Deserialize)]
+struct AIInput {
+    city: String,
+    country: String,
+}
+
+// call with params like: http://localhost:8080/ai?city=Stockholm&country=Sweden
+#[get("/ai")]
+async fn ai(params: web::Query<AIInput>) -> HttpResponse {
+    let city = params.city.to_string();
+    let country = params.country.to_string();
+
+    println!("Received via params --> City: {} / Country: {}", city, country);
+
+    let response = run_llm_chain(city, country).await;
+    
+
+    match response {
+        Ok(result) => {
+            let final_res = result[11..].to_string(); //removing the leading text 'Assistant:'
+            HttpResponse::Ok().body(final_res)},
+        Err(e) => {HttpResponse::InternalServerError().body(format!("Error from AI: {}", e))}
+    }
+}
+
+
 // here is the Actix server itself:
 
 #[actix_web::main]
@@ -346,6 +391,8 @@ async fn main() -> Result<(), Box<dyn Error>> {
             .service(hello)
             .service(htmxtest)
             .service(update_highscore)
+            .service(addfive)
+            .service(ai)
             .service(create)
             .service(get_all_books)
             .service(get_book_by_id)

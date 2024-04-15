@@ -42,6 +42,7 @@
       <br />
       <h3>Updating the Bevy Game Highscore</h3>
       <a href="https://github.com/ajerni/rust-bevy">see Github repo</a>
+      <!-- the form automaticaally binds hx-vals='{"json":"format"}' / hx-vals could be used everywhere to add payload to requests -->
       <form
         hx-patch="https://rust-sqlx.onrender.com/updatehighscore"
         hx-target="#myupdateresult"
@@ -60,6 +61,24 @@
       </form>
 
       <div id="myupdateresult"></div>
+      <h3>AI Joke Generator</h3>
+      <form
+        hx-patch="https://rust-sqlx.onrender.com/ai"
+        hx-target="#myjokeresult"
+      >
+        <p>
+          <label for="city">Word 1:</label>
+          <input type="text" id="city" name="city" />
+        </p>
+        <p>
+          <label for="country">Word 2:</label>
+          <input type="text" id="country" name="country" />
+        </p>
+        <p>
+          <button>Generiere Witz!</button>
+        </p>
+      </form>
+      <div id="myjokeresult"></div>
     </main>
   </body>
 </html>

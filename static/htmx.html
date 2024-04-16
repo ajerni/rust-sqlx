@@ -2,6 +2,11 @@
 <html>
   <head>
     <title>HTMX Essentials</title>
+    <style>
+      a {
+        margin-left: 15px;
+      }
+    </style>
     <link
       href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap"
       rel="stylesheet"
@@ -13,12 +18,15 @@
   <body>
     <header id="main-header">
       <img src="/htmx-logo.jpg" alt="HTMX Logo" />
-      <h1>Essentials</h1>
+      <h1>Frontend Demo</h1>
     </header>
     <main>
       <p>
-        HTMX test with backend running at rust-sqlx.onrender.com
-        <a href="https://github.com/ajerni/rust-sqlx">see Github repo</a>
+        HTMX test with backend running at
+        <strong>rust-sqlx.onrender.com</strong>
+        <a href="https://github.com/ajerni/rust-sqlx"
+          >see Github repo for Backend</a
+        >
       </p>
       <button
         hx-get="https://rust-sqlx.onrender.com/htmxtest"
@@ -39,9 +47,20 @@
         </p>
       </form>
       <div id="mytargetdiv"></div>
-      <br />
-      <h3>Updating the Bevy Game Highscore</h3>
-      <a href="https://github.com/ajerni/rust-bevy">see Github repo</a>
+      <div
+        style="
+          display: inline-flex;
+          justify-content: center;
+          align-items: center;
+        "
+      >
+        <h3>Updating the Highscore for Bevy Game</h3>
+        <a href="https://bevy.andierni.ch">Bevy Game </a>
+        <a href="https://github.com/ajerni/rust-bevy">
+          see Github repo for Bevy Game</a
+        >
+      </div>
+
       <!-- the form automaticaally binds hx-vals='{"json":"format"}' / hx-vals could be used everywhere to add payload to requests -->
       <form
         hx-patch="https://rust-sqlx.onrender.com/updatehighscore"
@@ -61,7 +80,7 @@
       </form>
 
       <div id="myupdateresult"></div>
-      <h3>AI Joke Generator</h3>
+      <h3>AI Joke Generator (Ultra-Flach-Witz-Generator zu Demo-Zwecken 😁)</h3>
       <form
         hx-post="https://rust-sqlx.onrender.com/ai"
         hx-target="#myjokeresult"

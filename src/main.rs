@@ -11,6 +11,9 @@ use std::error::Error;
 mod llm_chain;
 use crate::llm_chain::run_llm_chain;
 
+mod hello_mod;
+use crate::hello_mod::hello;
+
 #[derive(Debug, FromRow, Clone, Serialize, Deserialize)]
 struct Book {
     pub isbn: String,
@@ -29,11 +32,6 @@ struct Metadata {
 #[derive(Debug, Deserialize)]
 struct FormData {
     isbn: String,
-}
-
-#[get("/hello")]
-async fn hello() -> impl Responder {
-    HttpResponse::Ok().body("Hello world!")
 }
 
 async fn manual_hello() -> impl Responder {

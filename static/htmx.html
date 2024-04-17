@@ -6,6 +6,18 @@
       a {
         margin-left: 15px;
       }
+      #scoreboard th {
+        width: 25%;
+        text-align: left;
+      }
+
+      #scoreboard td {
+        text-align: left;
+      }
+      #scoreboard th:nth-child(2),
+      #scoreboard td:nth-child(2) {
+        width: 60%;
+      }
     </style>
     <link
       href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap"
@@ -13,6 +25,7 @@
     />
     <link rel="icon" href="/icon.png" />
     <script src="/htmx.js" defer></script>
+    <script src="https://unpkg.com/alpinejs@3.8.1/dist/cdn.min.js"></script>
     <link rel="stylesheet" href="/main.css" />
   </head>
   <body>
@@ -119,6 +132,29 @@
         </p>
       </form>
       <div id="scoerboardsetresult"></div>
+
+      <h2>Top 10 PostgreSQL Kings</h2>
+      <table id="scoreboard">
+        <thead>
+          <tr>
+            <th>Rank</th>
+            <th>Name</th>
+            <th>Score</th>
+          </tr>
+        </thead>
+        <tbody
+          x-data="{ scores: [] }"
+          x-init="fetch('/scoreboard').then(response => response.json()).then(data => scores = data)"
+        >
+          <template x-for="score in scores">
+            <tr>
+              <td x-text="score.rank"></td>
+              <td x-text="score.name"></td>
+              <td x-text="score.score"></td>
+            </tr>
+          </template>
+        </tbody>
+      </table>
     </main>
   </body>
 </html>

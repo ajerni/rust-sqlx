@@ -7,11 +7,11 @@ use std::error::Error;
 
 #[derive(Debug, FromRow, Clone, Serialize, Deserialize)]
 struct ScoreInput {
-    pub name: String,
+    pub playername: String,
     pub score: String,
 }
 
-#[post("/scoreboard")] //call with params: http://xxx/scoreboard?name=Andi&score=10
+#[post("/scoreboard")] //call with params: http://xxx/scoreboard?playername=Andi&score=10
 async fn set_scoreboard(pool: web::Data<PgPool>, score: web::Query<ScoreInput>) -> impl Responder {
     match create_score(&score, &pool).await {
         Ok(message) => HttpResponse::Ok().body(message),
@@ -19,7 +19,7 @@ async fn set_scoreboard(pool: web::Data<PgPool>, score: web::Query<ScoreInput>) 
     }
 }
 
-#[post("/scoreboardform")] //call with params: http://xxx/scoreboard?name=Andi&score=10
+#[post("/scoreboardform")] //call with params: http://xxx/scoreboard?playername=Andi&score=10
 async fn set_scoreboard_form(pool: web::Data<PgPool>, score: web::Form<ScoreInput>) -> impl Responder {
     match create_score(&score, &pool).await {
         Ok(message) => HttpResponse::Ok().body(message),
@@ -35,7 +35,7 @@ async fn create_score(
     let query = "INSERT INTO score VALUES ($1, $2)";
 
     sqlx::query(query)
-        .bind(&score.name)
+        .bind(&score.playername)
         .bind(&parsed_score)
         .execute(pool)
         .await?;

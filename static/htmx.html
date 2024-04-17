@@ -25,7 +25,10 @@
     />
     <link rel="icon" href="/icon.png" />
     <script src="/htmx.js" defer></script>
-    <script src="https://unpkg.com/alpinejs@3.8.1/dist/cdn.min.js"></script>
+    <script
+      src="https://unpkg.com/alpinejs@3.8.1/dist/cdn.min.js"
+      defer
+    ></script>
     <link rel="stylesheet" href="/main.css" />
   </head>
   <body>
@@ -120,15 +123,17 @@
         hx-target="#scoerboardsetresult"
       >
         <p>
-          <label for="name">Player Name:</label>
-          <input type="text" id="name" name="name" style="width: 120px" />
+          <label for="playername">Player Name:</label>
+          <input type="text" id="playername" name="playername" style="width: 120px" />
         </p>
         <p>
           <label for="score">Score:</label>
           <input type="text" id="score" name="score" style="width: 80px" />
         </p>
         <p>
-          <button style="width: 150px">Enter new score</button>
+          <button style="width: 150px" x-on:click="fetchScoreboard">
+            Enter new score
+          </button>
         </p>
       </form>
       <div id="scoerboardsetresult"></div>
@@ -143,8 +148,15 @@
           </tr>
         </thead>
         <tbody
-          x-data="{ scores: [] }"
-          x-init="fetch('/scoreboard').then(response => response.json()).then(data => scores = data)"
+          x-data="{ scores: [], fetchScoreboard: async function() {
+            const response = await fetch('/scoreboard');
+            const data = await response.json();
+            this.scores = data;
+          } }"
+          x-init="
+            fetchScoreboard();
+            document.querySelector('button').addEventListener('click', fetchScoreboard);
+          "
         >
           <template x-for="score in scores">
             <tr>

@@ -31,3 +31,5 @@ Startet as database example, this repo grows into my general purpose Rust/Actix/
 
 I have also added a htmx frontend example under:
 https://rust-sqlx.onrender.com/htmx and https://htmx.andierni.ch
+
+Latest feature is the scoreboard - all logic handeld in PostgreSQL using views, triggers and functions in the database itself - see psql_helper.txt

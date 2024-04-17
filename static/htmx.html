@@ -80,7 +80,10 @@
       </form>
 
       <div id="myupdateresult"></div>
-      <h3>AI Joke Generator (Ultra-Flach-Witz-Generator zu Demo-Zwecken 😁)</h3>
+      <h3>
+        ChatGPT AI Joke Generator (Ultra-Flach-Witz-Generator als llm-chain-Demo
+        😁)
+      </h3>
       <form
         hx-post="https://rust-sqlx.onrender.com/ai"
         hx-target="#myjokeresult"
@@ -105,14 +108,14 @@
       >
         <p>
           <label for="name">Player Name:</label>
-          <input type="text" id="name" name="name" />
+          <input type="text" id="name" name="name" style="width: 120px" />
         </p>
         <p>
           <label for="score">Score:</label>
-          <input type="text" id="score" name="score" />
+          <input type="text" id="score" name="score" style="width: 80px" />
         </p>
         <p>
-          <button>Generiere Witz!</button>
+          <button style="width: 150px">Enter new score</button>
         </p>
       </form>
       <div id="scoerboardsetresult"></div>

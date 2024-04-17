@@ -117,26 +117,6 @@
         </p>
       </form>
       <div id="myjokeresult"></div>
-      <h3>Update PostgreSQL Scoreboard Top 10</h3>
-      <form
-        hx-post="https://rust-sqlx.onrender.com/scoreboardform"
-        hx-target="#scoerboardsetresult"
-      >
-        <p>
-          <label for="playername">Player Name:</label>
-          <input type="text" id="playername" name="playername" style="width: 120px" />
-        </p>
-        <p>
-          <label for="score">Score:</label>
-          <input type="text" id="score" name="score" style="width: 80px" />
-        </p>
-        <p>
-          <button style="width: 150px" x-on:click="fetchScoreboard">
-            Enter new score
-          </button>
-        </p>
-      </form>
-      <div id="scoerboardsetresult"></div>
 
       <h2>Top 10 PostgreSQL Kings</h2>
       <table id="scoreboard">
@@ -149,14 +129,11 @@
         </thead>
         <tbody
           x-data="{ scores: [], fetchScoreboard: async function() {
-            const response = await fetch('/scoreboard');
-            const data = await response.json();
-            this.scores = data;
-          } }"
-          x-init="
-            fetchScoreboard();
-            document.querySelector('button').addEventListener('click', fetchScoreboard);
-          "
+          const response = await fetch('/scoreboard');
+          const data = await response.json();
+          this.scores = data;
+        } }"
+          x-init="fetchScoreboard();"
         >
           <template x-for="score in scores">
             <tr>
@@ -167,6 +144,37 @@
           </template>
         </tbody>
       </table>
+
+      <form
+        hx-post="https://rust-sqlx.onrender.com/scoreboardform"
+        hx-target="#scoreboardsetresult"
+      >
+        <p>
+          <label for="playername">Player Name:</label>
+          <input
+            type="text"
+            id="playername"
+            name="playername"
+            style="width: 120px"
+          />
+        </p>
+        <p>
+          <label for="score">Score:</label>
+          <input type="text" id="score" name="score" style="width: 80px" />
+        </p>
+        <p>
+          <button style="width: 150px">Enter new score</button>
+        </p>
+      </form>
+      <div id="scoreboardsetresult"></div>
     </main>
+    <script>
+      document.addEventListener("htmx:afterSettle", function (evt) {
+        alert("at least got to here...");
+        //TODO: update x-data="{ scores: [], fetchScoreboard: fetchScoreboard }" to trigger update of DOM after hx-post has commpleted
+        //How to access x-data's scores here???
+        //Maybe Access x-data's scores by using Alpine.js's $refs
+      });
+    </script>
   </body>
 </html>

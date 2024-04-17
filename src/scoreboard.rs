@@ -19,7 +19,7 @@ async fn set_scoreboard(pool: web::Data<PgPool>, score: web::Query<ScoreInput>) 
     }
 }
 
-#[post("/scoreboardform")] //call with params: http://xxx/scoreboard?playername=Andi&score=10
+#[post("/scoreboardform")] //call from form
 async fn set_scoreboard_form(pool: web::Data<PgPool>, score: web::Form<ScoreInput>) -> impl Responder {
     match create_score(&score, &pool).await {
         Ok(message) => HttpResponse::Ok().body(message),

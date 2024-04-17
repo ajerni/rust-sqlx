@@ -14,6 +14,9 @@ use crate::llm_chain::run_llm_chain;
 mod hello_mod;
 use crate::hello_mod::hello;
 
+mod scoreboard;
+use crate::scoreboard::*;
+
 #[derive(Debug, FromRow, Clone, Serialize, Deserialize)]
 struct Book {
     pub isbn: String,
@@ -321,7 +324,7 @@ async fn update_highscore(
 #[get("/addfive/{number}")]
 async fn addfive(path: web::Path<(String,)>) -> impl Responder {
     let number = path.into_inner().0.parse::<u8>(); // Parse the string into a u8
-    // Check if parsing was successful
+                                                    // Check if parsing was successful
     if let Ok(number) = number {
         let r = number + 5;
         HttpResponse::Ok().body(format!("Result: {}", r))
@@ -344,15 +347,19 @@ async fn ai_get(params: web::Query<AIInput>) -> HttpResponse {
     let city = params.city.to_string();
     let country = params.country.to_string();
 
-    println!("Received via params --> City: {} / Country: {}", city, country);
+    println!(
+        "Received via params --> City: {} / Country: {}",
+        city, country
+    );
 
     let response = run_llm_chain(city, country).await;
-    
+
     match response {
         Ok(result) => {
             let final_res = result[11..].to_string(); //removing the leading text 'Assistant:'
-            HttpResponse::Ok().body(final_res)},
-        Err(e) => {HttpResponse::InternalServerError().body(format!("Error from AI: {}", e))}
+            HttpResponse::Ok().body(final_res)
+        }
+        Err(e) => HttpResponse::InternalServerError().body(format!("Error from AI: {}", e)),
     }
 }
 
@@ -362,18 +369,21 @@ async fn ai_post(params: web::Form<AIInput>) -> HttpResponse {
     let city = params.city.to_string();
     let country = params.country.to_string();
 
-    println!("Received via params --> City: {} / Country: {}", city, country);
+    println!(
+        "Received via params --> City: {} / Country: {}",
+        city, country
+    );
 
     let response = run_llm_chain(city, country).await;
-    
+
     match response {
         Ok(result) => {
             let final_res = result[11..].to_string(); //removing the leading text 'Assistant:'
-            HttpResponse::Ok().body(final_res)},
-        Err(e) => {HttpResponse::InternalServerError().body(format!("Error from AI: {}", e))}
+            HttpResponse::Ok().body(final_res)
+        }
+        Err(e) => HttpResponse::InternalServerError().body(format!("Error from AI: {}", e)),
     }
 }
-
 
 // here is the Actix server itself:
 
@@ -409,6 +419,10 @@ async fn main() -> Result<(), Box<dyn Error>> {
             .service(htmxtest)
             .service(update_highscore)
             .service(addfive)
+            .service(set_scoreboard)
+            .service(set_scoreboard_form)
+            .service(get_scoreboard)
+            .service(get_topscorer)
             .service(ai_get)
             .service(ai_post)
             .service(create)

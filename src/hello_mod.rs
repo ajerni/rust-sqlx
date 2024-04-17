@@ -1,4 +1,4 @@
-use actix_web::{get, Responder, HttpResponse};
+use actix_web::{get, HttpResponse, Responder};
 
 #[get("/hello")]
 pub async fn hello() -> impl Responder {

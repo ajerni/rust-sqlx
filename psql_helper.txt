@@ -1,0 +1,10 @@
+psql commands:
+\h (SQL ) \? (psql)
+\l \l+ (databeses)
+\x (expanded on/off) \t (table headers on/off)
+\d (describe) \d+ \dt (tables) \dt+ \dv (views) \df (functions) \dft (functions with triggers) \du (users)
+
+see all definitions (views, triggers, functions):
+SELECT table_name, view_definition FROM information_schema.views WHERE table_schema = 'public';
+SELECT * FROM information_schema.triggers;
+SELECT * FROM information_schema.routines WHERE routine_type IN ('FUNCTION', 'PROCEDURE') AND routine_schema = 'public';

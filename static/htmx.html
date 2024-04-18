@@ -133,6 +133,11 @@
           const data = await response.json();
           this.scores = data;
         } }"
+          @new-score-saved.window="scores = fetchScoreboard: async function() {
+          const response = await fetch('/scoreboard');
+          const data = await response.json();
+          this.scores = data;
+        "
           x-init="fetchScoreboard();"
         >
           <template x-for="score in scores">
@@ -169,8 +174,8 @@
       <div id="scoreboardsetresult"></div>
     </main>
     <script>
-      document.addEventListener("htmx:afterSettle", function (evt) {
-        alert("at least got to here...");
+      document.addEventListener("new-score-saved", function (evt) {
+        console.log("at least got to here...");
         //TODO: update x-data="{ scores: [], fetchScoreboard: fetchScoreboard }" to trigger update of DOM after hx-post has commpleted
         //How to access x-data's scores here???
         //Maybe Access x-data's scores by using Alpine.js's $refs

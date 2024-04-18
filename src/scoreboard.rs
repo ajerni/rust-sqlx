@@ -46,10 +46,11 @@ async fn set_scoreboard_form(
                 .collect::<Vec<Score>>();
 
             let json_data = serde_json::to_string(&scores);
+            let return_score_string: String = "scores=".to_string() + &json_data.unwrap();
 
             HttpResponse::Ok()
-                .append_header(("HX-Trigger", "afterSettle"))
-                .append_header(("X-Alpine-Data", json_data.unwrap()))
+                .append_header(("HX-Trigger", "afterSettle")) // htmx triggering alpinejs data to...
+                .append_header(("X-Alpine-Data", return_score_string)) // ...refresh the table after new entry has been saved
                 .body(message)
         }
         Err(e) => HttpResponse::InternalServerError().body(format!("Error: {}", e)),

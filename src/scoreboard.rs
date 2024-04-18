@@ -1,6 +1,5 @@
 use actix_web::{get, post, web, HttpResponse, Responder};
 use serde::{Deserialize, Serialize};
-use serde_json;
 use sqlx::{FromRow, PgPool, Row};
 use std::error::Error;
 

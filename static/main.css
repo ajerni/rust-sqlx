@@ -1,16 +1,16 @@
-@import url('https://fonts.googleapis.com/css2?family=Merriweather:ital,wght@0,300;0,400;0,700;0,900;1,300;1,400;1,700;1,900&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=Merriweather:ital,wght@0,300;0,400;0,700;0,900;1,300;1,400;1,700;1,900&display=swap");
 
 * {
   box-sizing: border-box;
 }
 
 html {
-  font-family: 'Poppins', sans-serif;
+  font-family: "Poppins", sans-serif;
 }
 
 body {
   margin: 0;
-  background: linear-gradient(#121214, #272629);
+  background: linear-gradient(hsl(240, 36%, 26%), hwb(227 22% 54%));
   color: #c2c1c6;
   min-height: 100vh;
 }
@@ -75,4 +75,17 @@ main input {
   display: block;
   font: inherit;
   width: 100%;
+}
+
+a {
+  color: red;
+  /* text-decoration: none; */
+}
+
+h1 {
+  color: white;
+}
+
+h3 {
+  color: #ebebf9;
 }

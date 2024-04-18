@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title>HTMX Essentials</title>
+    <title>Frontend Demo</title>
     <style>
       a {
         margin-left: 15px;
@@ -37,32 +37,48 @@
       <h1>Frontend Demo</h1>
     </header>
     <main>
-      <p>
-        HTMX test with backend running at
-        <strong>rust-sqlx.onrender.com</strong>
-        <a href="https://github.com/ajerni/rust-sqlx"
-          >see Github repo for Backend</a
+      <div style="margin-top: -20px">
+        <p>
+          Test frontend to use the backend running at
+          <strong>rust-sqlx.onrender.com</strong>
+          <a href="https://github.com/ajerni/rust-sqlx"
+            >see Github repo for Backend</a
+          >
+        </p>
+        <button
+          hx-get="https://rust-sqlx.onrender.com/htmxtest"
+          hx-swap="outerHTML"
         >
-      </p>
-      <button
-        hx-get="https://rust-sqlx.onrender.com/htmxtest"
-        hx-swap="outerHTML"
-      >
-        Get something
-      </button>
-      <form
-        hx-post="https://rust-sqlx.onrender.com/form-handler"
-        hx-target="#mytargetdiv"
-      >
-        <p>
-          <label for="isbn">Get book:</label>
-          <input type="text" placeholder="9901" id="isbn" name="isbn" />
-        </p>
-        <p>
-          <button>Search book</button>
-        </p>
-      </form>
-      <div id="mytargetdiv"></div>
+          More info
+        </button>
+      </div>
+
+      <h3 style="margin-top: 30px; margin-bottom: -13px">
+        Accessing the database
+      </h3>
+      <div style="display: inline-flex">
+        <form
+          hx-post="https://rust-sqlx.onrender.com/form-handler"
+          hx-target="#mytargetdiv"
+          hx-on::after-request="this.reset()"
+        >
+          <p style="margin-right: 0px">
+            <label for="isbn">Get book:</label>
+            <input
+              style="width: 120px"
+              type="text"
+              placeholder="9901"
+              id="isbn"
+              name="isbn"
+            />
+          </p>
+          <p>
+            <button style="width: 150px; margin-left: 0px">Search book</button>
+          </p>
+        </form>
+        <div id="mytargetdiv"></div>
+      </div>
+
       <div
         style="
           display: inline-flex;
@@ -71,55 +87,72 @@
         "
       >
         <h3>Updating the Highscore for Bevy Game</h3>
-        <a href="https://bevy.andierni.ch">Bevy Game </a>
+        <a class="blue" href="https://bevy.andierni.ch">Bevy Game </a>
         <a href="https://github.com/ajerni/rust-bevy">
           see Github repo for Bevy Game</a
         >
       </div>
 
       <!-- the form automaticaally binds hx-vals='{"json":"format"}' / hx-vals could be used everywhere to add payload to requests -->
-      <form
-        hx-patch="https://rust-sqlx.onrender.com/updatehighscore"
-        hx-target="#myupdateresult"
-      >
-        <p>
-          <label for="name">Name:</label>
-          <input type="text" id="name" name="name" />
-        </p>
-        <p>
-          <label for="highscore">Highscore:</label>
-          <input type="text" id="highscore" name="highscore" />
-        </p>
-        <p>
-          <button>Update Highscore</button>
-        </p>
-      </form>
+      <div style="margin-top: -30px">
+        <form
+          hx-patch="https://rust-sqlx.onrender.com/updatehighscore"
+          hx-target="#myupdateresult"
+          hx-on::after-request="this.reset()"
+        >
+          <p>
+            <label for="name">Name:</label>
+            <input style="width: 120px" type="text" id="name" name="name" />
+          </p>
+          <p>
+            <label for="highscore">Highscore:</label>
+            <input
+              style="width: 120px"
+              type="text"
+              id="highscore"
+              name="highscore"
+            />
+          </p>
+          <p>
+            <button style="width: 150px">Update Highscore</button>
+          </p>
+        </form>
 
-      <div id="myupdateresult"></div>
+        <div id="myupdateresult"></div>
+      </div>
+
       <h3>
         ChatGPT AI Joke Generator (Ultra-Flach-Witz-Generator als llm-chain-Demo
         😁)
       </h3>
-      <form
-        hx-post="https://rust-sqlx.onrender.com/ai"
-        hx-target="#myjokeresult"
-      >
-        <p>
-          <label for="city">Word 1:</label>
-          <input type="text" id="city" name="city" />
-        </p>
-        <p>
-          <label for="country">Word 2:</label>
-          <input type="text" id="country" name="country" />
-        </p>
-        <p>
-          <button>Generiere Witz!</button>
-        </p>
-      </form>
-      <div id="myjokeresult"></div>
+      <div style="margin-top: -30px">
+        <form
+          hx-post="https://rust-sqlx.onrender.com/ai"
+          hx-target="#myjokeresult"
+          hx-on::after-request="this.reset()"
+        >
+          <p>
+            <label for="city">Word 1:</label>
+            <input style="width: 120px" type="text" id="city" name="city" />
+          </p>
+          <p>
+            <label for="country">Word 2:</label>
+            <input
+              style="width: 120px"
+              type="text"
+              id="country"
+              name="country"
+            />
+          </p>
+          <p>
+            <button style="width: 150px">Generiere Witz!</button>
+          </p>
+        </form>
+        <div id="myjokeresult"></div>
+      </div>
 
-      <h2>Top 10 PostgreSQL Kings</h2>
-      <table id="scoreboard">
+      <h3>Top 10 PostgreSQL Kings</h3>
+      <table id="scoreboard" style="margin-top: -10px">
         <thead>
           <tr>
             <th>Rank</th>
@@ -146,28 +179,31 @@
         </tbody>
       </table>
 
-      <form
-        hx-post="https://rust-sqlx.onrender.com/scoreboardform"
-        hx-target="#scoreboardsetresult"
-      >
-        <p>
-          <label for="playername">Player Name:</label>
-          <input
-            type="text"
-            id="playername"
-            name="playername"
-            style="width: 120px"
-          />
-        </p>
-        <p>
-          <label for="score">Score:</label>
-          <input type="text" id="score" name="score" style="width: 80px" />
-        </p>
-        <p>
-          <button style="width: 150px">Enter new score</button>
-        </p>
-      </form>
-      <div id="scoreboardsetresult"></div>
+      <div style="margin-top: -10px">
+        <form
+          hx-post="https://rust-sqlx.onrender.com/scoreboardform"
+          hx-target="#scoreboardsetresult"
+          hx-on::after-request="this.reset()"
+        >
+          <p>
+            <label for="playername">Player Name:</label>
+            <input
+              type="text"
+              id="playername"
+              name="playername"
+              style="width: 120px"
+            />
+          </p>
+          <p>
+            <label for="score">Score:</label>
+            <input type="text" id="score" name="score" style="width: 120px" />
+          </p>
+          <p>
+            <button style="width: 150px">Enter new score</button>
+          </p>
+        </form>
+        <div id="scoreboardsetresult"></div>
+      </div>
     </main>
     <script>
       document.addEventListener("new-score-saved", function (evt) {

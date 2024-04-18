@@ -27,30 +27,8 @@ async fn set_scoreboard_form(
 ) -> impl Responder {
     match create_score(&score, &pool).await {
         Ok(message) => {
-            // let q = "SELECT rank, player_name, score FROM ranked_scores";
-            // let rows = match sqlx::query(q).fetch_all(pool.get_ref()).await {
-            //     Ok(rows) => rows,
-            //     Err(e) => {
-            //         return HttpResponse::InternalServerError()
-            //             .body(format!("Database error: {}", e))
-            //     }
-            // };
-
-            // let scores = rows
-            //     .iter()
-            //     .map(|row| Score {
-            //         rank: row.get("rank"),
-            //         name: row.get("player_name"),
-            //         score: row.get("score"),
-            //     })
-            //     .collect::<Vec<Score>>();
-
-            // let json_data = serde_json::to_string(&scores);
-            // let return_score_string: String = "scores=".to_string() + &json_data.unwrap();
-
             HttpResponse::Ok()
-                .append_header(("HX-Trigger", "new-score-saved")) // htmx triggering alpinejs data to...
-                //.append_header(("X-Alpine-Data", return_score_string)) // ...refresh the table after new entry has been saved
+                .append_header(("HX-Trigger", "new-score-saved")) // htmx event to trigger alpinejs data to fetch again (https://alexanderzeitler.com/articles/listening-to-htmx-hx-trigger-response-header-events-from-alpine-js/)
                 .body(message)
         }
         Err(e) => HttpResponse::InternalServerError().body(format!("Error: {}", e)),

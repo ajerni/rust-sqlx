@@ -1,5 +1,6 @@
 use actix_web::{get, post, web, HttpResponse, Responder};
 use serde::{Deserialize, Serialize};
+use serde_json;
 use sqlx::{FromRow, PgPool, Row};
 use std::error::Error;
 
@@ -20,9 +21,37 @@ async fn set_scoreboard(pool: web::Data<PgPool>, score: web::Query<ScoreInput>) 
 }
 
 #[post("/scoreboardform")] //call from form
-async fn set_scoreboard_form(pool: web::Data<PgPool>, score: web::Form<ScoreInput>) -> impl Responder {
+async fn set_scoreboard_form(
+    pool: web::Data<PgPool>,
+    score: web::Form<ScoreInput>,
+) -> impl Responder {
     match create_score(&score, &pool).await {
-        Ok(message) => HttpResponse::Ok().body(message),
+        Ok(message) => {
+            let q = "SELECT rank, player_name, score FROM ranked_scores";
+            let rows = match sqlx::query(q).fetch_all(pool.get_ref()).await {
+                Ok(rows) => rows,
+                Err(e) => {
+                    return HttpResponse::InternalServerError()
+                        .body(format!("Database error: {}", e))
+                }
+            };
+
+            let scores = rows
+                .iter()
+                .map(|row| Score {
+                    rank: row.get("rank"),
+                    name: row.get("player_name"),
+                    score: row.get("score"),
+                })
+                .collect::<Vec<Score>>();
+
+            let json_data = serde_json::to_string(&scores);
+
+            HttpResponse::Ok()
+                .append_header(("HX-Trigger", "afterSettle"))
+                .append_header(("X-Alpine-Data", json_data.unwrap()))
+                .body(message)
+        }
         Err(e) => HttpResponse::InternalServerError().body(format!("Error: {}", e)),
     }
 }

@@ -122,8 +122,8 @@
       </div>
 
       <h3>
-        ChatGPT AI Joke Generator (Ultra-Flach-Witz-Generator als llm-chain-Demo
-        😁)
+        ChatGPT AI Joke Generator (Ultra-Flach-Witz-Generator als
+        llm-chain-Demo)
       </h3>
       <div style="margin-top: -30px">
         <form
@@ -162,7 +162,7 @@
         </thead>
         <tbody
           x-data="{ scores: [], fetchScoreboard: async function() {
-            const response = await fetch('/scoreboard');
+            const response = await fetch('https://rust-sqlx.onrender.com/scoreboard');
             const data = await response.json();
             this.scores = data;
           } }"

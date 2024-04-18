@@ -284,8 +284,8 @@ async fn htmxtest() -> impl Responder {
     HttpResponse::Ok().body(
         "
     <h3>I am pure HTML returned from the server...</h3>
-    <p>...demonstrating the use of <strong>htmx</strong> and <strong>alpinejs</strong> in the frontend 🖥️...</p>
-    <p>...accessing an <strong>Actix webserver</strong> at the backend 💾...</p>
+    <p>...demonstrating the use of <strong>htmx</strong> and <strong>alpinejs</strong> in the frontend 🖥️ ...</p>
+    <p>...accessing an <strong>Actix webserver</strong> at the backend 💾.</p>
     ",
     )
 }

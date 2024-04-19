@@ -43,7 +43,7 @@ async fn create_score(
 
     sqlx::query(query)
         .bind(&score.playername)
-        .bind(&parsed_score)
+        .bind(parsed_score)
         .execute(pool)
         .await?;
 

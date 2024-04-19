@@ -279,16 +279,18 @@ async fn delete_d(isbn: &str, pool: &sqlx::PgPool) -> Result<(), Box<dyn Error>>
 
 // this is a separate new section to test htmx
 
-#[get("/htmxtest")]
+#[get("/htmxtest)")]
 async fn htmxtest() -> impl Responder {
-    HttpResponse::Ok().body(
-        "
-    <h3>I am pure HTML returned from the server...</h3>
-    <p>...demonstrating the use of <strong>htmx</strong> and <strong>alpinejs</strong> in the frontend 🖥️ ...</p>
-    <p>...accessing an <strong>Actix webserver</strong> at the backend 💾.</p>
-    ",
-    )
+    let my_whatever = String::from("SERVER-DATA here!"); // Replace with your data fetching logic
+
+    let response_body = format!(
+        "<h3>I am pure HTML returned from the server...</h3>
+        <p>...demonstrating the use of <strong>htmx</strong> and <strong>alpinejs</strong> in the 🖥️ frontend...</p>
+        <p>...accessing 💾 <strong>Rust Actix webserver</strong> at the backend: {}", my_whatever);
+
+    HttpResponse::Ok().body(response_body)
 }
+
 
 // this is to manually update the highscore data of my Bevy game (bevy.andierni.ch)
 

@@ -52,6 +52,50 @@
           More info
         </button>
       </div>
+      <div style="justify-content: center; align-items: center">
+        <h3
+          style="
+            margin-bottom: 10px;
+            justify-content: center;
+            align-items: center;
+          "
+        >
+          Live Change Demo
+        </h3>
+        <div id="updaterdiv" style="display: inline-flex; margin-top: -30px">
+          <h4 style="color: chartreuse; margin-right: 120px; font-size: 20px">
+            <div id="mylivetexttarget">Livetext here</div>
+          </h4>
+          <div
+            style="
+              display: inline-flex;
+              justify-content: center;
+              align-items: center;
+            "
+          >
+            <form
+              hx-post="https://rust-sqlx.onrender.com/livetextchange"
+              hx-target="#mylivetexttarget"
+              hx-on::after-request="this.reset()"
+            >
+              <p style="margin-right: 0px">
+                <input
+                  style="width: 320px"
+                  type="text"
+                  placeholder="Change text from somewhere else..."
+                  id="livetext"
+                  name="livetext"
+                />
+              </p>
+              <p>
+                <button style="width: 150px; margin-left: 0px">
+                  Change text
+                </button>
+              </p>
+            </form>
+          </div>
+        </div>
+      </div>
 
       <h3 style="margin-top: 30px; margin-bottom: -13px">
         Accessing the database

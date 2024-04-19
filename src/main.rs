@@ -292,7 +292,6 @@ async fn htmxtest() -> impl Responder {
     HttpResponse::Ok().body(response_body)
 }
 
-
 // this is to manually update the highscore data of my Bevy game (bevy.andierni.ch)
 
 #[derive(Debug, Deserialize)]
@@ -337,6 +336,20 @@ async fn addfive(path: web::Path<(String,)>) -> impl Responder {
     }
 }
 
+// Live text change with htmx event in header
+
+#[derive(Debug, FromRow, Clone, Serialize, Deserialize)]
+struct TextInput {
+    text: String,
+}
+
+#[post("/livetextchange")] //call from form
+async fn livetextchange(pool: web::Data<PgPool>, form: web::Form<TextInput>) -> impl Responder {
+    HttpResponse::Ok()
+        .append_header(("HX-Trigger", "got-new-text")) // htmx event to trigger alpinejs data to fetch again (https://alexanderzeitler.com/articles/listening-to-htmx-hx-trigger-response-header-events-from-alpine-js/)
+        .body(form.text.clone())
+}
+
 // llm-chaon / ChatGPT demo
 #[derive(Debug, Deserialize)]
 struct AIInput {
@@ -366,7 +379,7 @@ async fn ai_get(params: web::Query<AIInput>) -> HttpResponse {
     }
 }
 
-// call with 'params' taken from frontent form
+// call with 'params' taken from frontend form
 #[post("/ai")]
 async fn ai_post(params: web::Form<AIInput>) -> HttpResponse {
     let city = params.city.to_string();
@@ -426,6 +439,7 @@ async fn main() -> Result<(), Box<dyn Error>> {
             .service(set_scoreboard_form)
             .service(get_scoreboard)
             .service(get_topscorer)
+            .service(livetextchange)
             .service(ai_get)
             .service(ai_post)
             .service(create)

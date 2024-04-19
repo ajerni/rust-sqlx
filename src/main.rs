@@ -279,7 +279,7 @@ async fn delete_d(isbn: &str, pool: &sqlx::PgPool) -> Result<(), Box<dyn Error>>
 
 // this is a separate new section to test htmx
 
-#[get("/htmxtest)")]
+#[get("/htmxtest")]
 async fn htmxtest() -> impl Responder {
     let my_whatever = String::from("SERVER-DATA here!"); // Replace with your data fetching logic
 

@@ -11,7 +11,7 @@ struct ScoreInput {
     pub score: String,
 }
 
-#[post("/scoreboard")] //call with params: http://xxx/scoreboard?playername=Andi&score=10
+#[post("/scoreboard")] //call with params(Query): http://xxx/scoreboard?playername=Andi&score=10
 async fn set_scoreboard(pool: web::Data<PgPool>, score: web::Query<ScoreInput>) -> impl Responder {
     match create_score(&score, &pool).await {
         Ok(message) => HttpResponse::Ok().body(message),

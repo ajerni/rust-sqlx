@@ -84,9 +84,10 @@ async fn handle_form(form: web::Form<FormData>, pool: web::Data<PgPool>) -> impl
         }
         //Ok(Some(book)) => HttpResponse::Ok().json(book),
         Ok(None) => HttpResponse::NotFound().body("Book not found."),
-        Err(e) => {
+        Err(_) => {
             dbg!(&isbn);
-            HttpResponse::InternalServerError().body(format!("Error: {}", e))
+            HttpResponse::Ok().body("Book not found.")
+            //HttpResponse::InternalServerError().body(format!("Error: {}", e))
         }
     }
 }
@@ -281,12 +282,12 @@ async fn delete_d(isbn: &str, pool: &sqlx::PgPool) -> Result<(), Box<dyn Error>>
 
 #[get("/htmxtest")]
 async fn htmxtest() -> impl Responder {
-    let my_whatever = String::from("SERVER-DATA here!"); // Replace with your data fetching logic
+    let my_whatever = String::from("💾 SERVER-DATA here!"); // Replace with your data fetching logic
 
     let response_body = format!(
         "<h3>I am pure HTML returned from the server...</h3>
         <p>...demonstrating the use of <strong>htmx</strong> and <strong>alpinejs</strong> in the 🖥️ frontend...</p>
-        <p>...accessing 💾 <strong>Rust Actix webserver</strong> at the backend: {}", my_whatever);
+        <p>...accessing 🗄️ <strong>Rust Actix webserver</strong> at the backend: {}", my_whatever);
 
     HttpResponse::Ok().body(response_body)
 }

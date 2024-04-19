@@ -372,7 +372,7 @@ async fn update_livetext(text: String, pool: &sqlx::PgPool) -> Result<(), Box<dy
 
 #[derive(Serialize, Deserialize, FromRow)]
 struct LiveText {
-    text: String,
+    value: String,
 }
 
 #[get("/getlivetext")]
@@ -381,8 +381,8 @@ pub async fn getlivetext(pool: web::Data<PgPool>) -> Result<HttpResponse, actix_
         .fetch_one(pool.get_ref())
         .await
         .map_err(actix_web::error::ErrorInternalServerError)?;
-    
-    Ok(HttpResponse::Ok().json(row.text))
+
+    Ok(HttpResponse::Ok().body(row.value))
 }
 
 // LLM-CHAIN / ChatGPT demo

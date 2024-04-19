@@ -345,9 +345,11 @@ struct TextInput {
 
 #[post("/livetextchange")] //call from form
 async fn livetextchange(pool: web::Data<PgPool>, form: web::Form<TextInput>) -> impl Responder {
+    let response = "testneu".to_string();
     HttpResponse::Ok()
-        .append_header(("HX-Trigger", "got-new-text")) // htmx event to trigger alpinejs data to fetch again (https://alexanderzeitler.com/articles/listening-to-htmx-hx-trigger-response-header-events-from-alpine-js/)
-        .body(form.text.clone())
+        .append_header(("HX-Trigger", "got-new-text")) 
+        //.body(form.text.clone())
+        .body(response)
 }
 
 // llm-chaon / ChatGPT demo

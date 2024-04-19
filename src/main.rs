@@ -84,7 +84,7 @@ async fn handle_form(form: web::Form<FormData>, pool: web::Data<PgPool>) -> impl
         }
         //Ok(Some(book)) => HttpResponse::Ok().json(book),
         Ok(None) => HttpResponse::Ok().body("Book not found."),
-        Err(_) => {
+        Err(e) => {
             dbg!(&isbn);
             //HttpResponse::Ok().body("Book not found.")
             HttpResponse::InternalServerError().body(format!("Error: {}", e))

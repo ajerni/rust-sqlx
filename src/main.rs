@@ -381,11 +381,8 @@ pub async fn getlivetext(pool: web::Data<PgPool>) -> Result<HttpResponse, actix_
         .fetch_one(pool.get_ref())
         .await
         .map_err(actix_web::error::ErrorInternalServerError)?;
-
-    //let return_string: String = row.text;
-    let return_string: String = "Teststringfrom getlive".to_string();
-
-    Ok(HttpResponse::Ok().body(return_string))
+    
+    Ok(HttpResponse::Ok().json(row.text))
 }
 
 // LLM-CHAIN / ChatGPT demo

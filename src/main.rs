@@ -340,16 +340,27 @@ async fn addfive(path: web::Path<(String,)>) -> impl Responder {
 
 #[derive(Debug, FromRow, Clone, Serialize, Deserialize)]
 struct TextInput {
-    text: String,
+    livetext: String,
 }
 
-#[post("/livetextchange")] //call from form
-async fn livetextchange(pool: web::Data<PgPool>, form: web::Form<TextInput>) -> impl Responder {
-    let response = "testneu".to_string();
+#[post("/livetextchange")]
+async fn livetextchange(form: web::Form<TextInput>) -> HttpResponse {
+
+    //TODO: save the new livetext in DB:
+
+    //send event via response header to trigger hx-get in the html code (hx-trigger="new-text-entered-event from:body")
     HttpResponse::Ok()
-        .append_header(("HX-Trigger", "got-new-text")) 
-        //.body(form.text.clone())
-        .body(response)
+    .append_header(("HX-Trigger", "new-text-entered-event"))
+    .finish()
+}
+
+#[get("/getlivetext")]
+async fn getlivetext() -> HttpResponse {
+
+    //TODO: get the livetext from DB:
+    
+    //return the livetext:
+    HttpResponse::Ok().body("new text will come here")
 }
 
 // llm-chaon / ChatGPT demo
@@ -442,6 +453,7 @@ async fn main() -> Result<(), Box<dyn Error>> {
             .service(get_scoreboard)
             .service(get_topscorer)
             .service(livetextchange)
+            .service(getlivetext)
             .service(ai_get)
             .service(ai_post)
             .service(create)

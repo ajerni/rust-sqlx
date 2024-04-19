@@ -64,7 +64,18 @@
         </h3>
         <div id="updaterdiv" style="display: inline-flex; margin-top: -30px">
           <h4 style="color: chartreuse; margin-right: 120px; font-size: 20px">
+            <div
+              hx-trigger="load"
+              hx-get="/getlivetext"
+              hx-target="#mylivetexttarget"
+            ></div>
+            <div
+              hx-trigger="new-text-entered-event from:body"
+              hx-get="/getlivetext"
+              hx-target="#mylivetexttarget"
+            ></div>
             <div id="mylivetexttarget">Livetext here</div>
+            <div id="dummytostay"></div>
           </h4>
           <div
             style="
@@ -74,9 +85,9 @@
             "
           >
             <form
-              hx-post="https://rust-sqlx.onrender.com/livetextchange"
-              hx-target="#mylivetexttarget"
+              hx-post="/livetextchange"
               hx-on::after-request="this.reset()"
+              hx-target="#dummytostay"
             >
               <p style="margin-right: 0px">
                 <input

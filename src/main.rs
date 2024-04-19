@@ -349,7 +349,7 @@ async fn livetextchange(form: web::Form<TextInput>, pool: web::Data<PgPool>) -> 
     //save the new livetext from form to the DB:
     let new_text = form.livetext.clone();
 
-    //Two step process to save: callinge separate sqlx function allows to check for result here
+    //Two step process to save: callinge separate sqlx function allows to check for result here and trigger event only after DB entry has sucessfully finsished
     match update_livetext(new_text, &pool).await {  
         Ok(_) => HttpResponse::Ok()
          //send event via response header to trigger hx-get in the html code (hx-trigger="new-text-entered-event from:body")

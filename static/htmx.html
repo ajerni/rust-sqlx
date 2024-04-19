@@ -65,16 +65,11 @@
         <div id="updaterdiv" style="display: inline-flex; margin-top: -30px">
           <h4 style="color: chartreuse; margin-right: 120px; font-size: 20px">
             <div
-              hx-trigger="load"
+              hx-trigger="load, new-text-entered-event from:body, every 1s"
               hx-get="https://rust-sqlx.onrender.com/getlivetext"
               hx-target="#mylivetexttarget"
             ></div>
-            <div
-              hx-trigger="new-text-entered-event from:body"
-              hx-get="https://rust-sqlx.onrender.com/getlivetext"
-              hx-target="#mylivetexttarget"
-            ></div>
-            <div id="mylivetexttarget">Livetext here</div>
+            <div id="mylivetexttarget"></div>
             <div id="dummytostay"></div>
           </h4>
           <div

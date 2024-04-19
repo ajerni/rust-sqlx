@@ -336,34 +336,56 @@ async fn addfive(path: web::Path<(String,)>) -> impl Responder {
     }
 }
 
-// Live text change with htmx event in header
+// LIVE TEXT CHANGE WITH HTMX EVENT IN HEADER
 
 #[derive(Debug, FromRow, Clone, Serialize, Deserialize)]
 struct TextInput {
     livetext: String,
 }
 
-#[post("/livetextchange")]
-async fn livetextchange(form: web::Form<TextInput>) -> HttpResponse {
+#[patch("/livetextchange")]
+async fn livetextchange(form: web::Form<TextInput>, pool: web::Data<PgPool>) -> impl Responder {
 
-    //TODO: save the new livetext in DB:
+    //save the new livetext from form to the DB:
+    let new_text = form.livetext.clone();
 
-    //send event via response header to trigger hx-get in the html code (hx-trigger="new-text-entered-event from:body")
-    HttpResponse::Ok()
-    .append_header(("HX-Trigger", "new-text-entered-event"))
-    .finish()
+    //Two step process to save: callinge separate sqlx function allows to check for result here
+    match update_livetext(new_text, &pool).await {  
+        Ok(_) => HttpResponse::Ok()
+         //send event via response header to trigger hx-get in the html code (hx-trigger="new-text-entered-event from:body")
+        .append_header(("HX-Trigger", "new-text-entered-event"))
+        .finish(),
+        Err(e) => HttpResponse::InternalServerError().body(format!("Error updating book: {}", e)),
+    }    
+}
+
+async fn update_livetext(text: String, pool: &sqlx::PgPool) -> Result<(), Box<dyn Error>> {
+    let query = "UPDATE livedata SET value = $1 WHERE key = 'livetext'";
+
+    sqlx::query(query)
+        .bind(&text)
+        .execute(pool)
+        .await?;
+
+    Ok(())
+}
+
+#[derive(Serialize, Deserialize, FromRow)]
+struct LiveText {
+    text: String,
 }
 
 #[get("/getlivetext")]
-async fn getlivetext() -> HttpResponse {
+pub async fn getlivetext(pool: web::Data<PgPool>) -> Result<HttpResponse, actix_web::Error> {
+    let row: LiveText = sqlx::query_as("SELECT value FROM livedata WHERE key='livetext'")
+        .fetch_one(pool.get_ref())
+        .await
+        .map_err(actix_web::error::ErrorInternalServerError)?;
 
-    //TODO: get the livetext from DB:
-    
-    //return the livetext:
-    HttpResponse::Ok().body("new text will come here")
+    Ok(HttpResponse::Ok().body(row.text))
 }
 
-// llm-chaon / ChatGPT demo
+// LLM-CHAIN / ChatGPT demo
 #[derive(Debug, Deserialize)]
 struct AIInput {
     city: String,

@@ -17,6 +17,9 @@ use crate::hello_mod::hello;
 mod scoreboard;
 use crate::scoreboard::*;
 
+mod sql_listener;
+use crate::sql_listener::*;
+
 #[derive(Debug, FromRow, Clone, Serialize, Deserialize)]
 struct Book {
     pub isbn: String,
@@ -345,27 +348,23 @@ struct TextInput {
 
 #[patch("/livetextchange")]
 async fn livetextchange(form: web::Form<TextInput>, pool: web::Data<PgPool>) -> impl Responder {
-
     //save the new livetext from form to the DB:
     let new_text = form.livetext.clone();
 
     //Two step process to save: callinge separate sqlx function allows to check for result here and trigger event only after DB entry has sucessfully finsished
-    match update_livetext(new_text, &pool).await {  
+    match update_livetext(new_text, &pool).await {
         Ok(_) => HttpResponse::Ok()
-         //send event via response header to trigger hx-get in the html code (hx-trigger="new-text-entered-event from:body")
-        .append_header(("HX-Trigger", "new-text-entered-event"))
-        .finish(),
+            //send event via response header to trigger hx-get in the html code (hx-trigger="new-text-entered-event from:body")
+            .append_header(("HX-Trigger", "new-text-entered-event"))
+            .finish(),
         Err(e) => HttpResponse::InternalServerError().body(format!("Error updating book: {}", e)),
-    }    
+    }
 }
 
 async fn update_livetext(text: String, pool: &sqlx::PgPool) -> Result<(), Box<dyn Error>> {
     let query = "UPDATE livedata SET value = $1 WHERE key = 'livetext'";
 
-    sqlx::query(query)
-        .bind(&text)
-        .execute(pool)
-        .await?;
+    sqlx::query(query).bind(&text).execute(pool).await?;
 
     Ok(())
 }
@@ -476,6 +475,7 @@ async fn main() -> Result<(), Box<dyn Error>> {
             .service(get_topscorer)
             .service(livetextchange)
             .service(getlivetext)
+            .service(listen_to_pgsql)
             .service(ai_get)
             .service(ai_post)
             .service(create)
@@ -487,6 +487,7 @@ async fn main() -> Result<(), Box<dyn Error>> {
             .service(update_book)
             .service(delete_book)
             .route("/hey", web::get().to(manual_hello))
+            .service(fs::Files::new("/nextproject", "./static").index_file("nextproject.html"))
             .service(fs::Files::new("/other", "./static").index_file("other.html"))
             .service(fs::Files::new("/htmx", "./static").index_file("htmx.html"))
             .service(fs::Files::new("/", "./static").index_file("index.html"))

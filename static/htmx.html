@@ -18,6 +18,17 @@
       #scoreboard td:nth-child(2) {
         width: 60%;
       }
+      .myMenu {
+        color: blue;
+        text-decoration: none;
+        margin-top: 11px;
+      }
+
+      .myMenu:hover {
+        /* Apply styles on hover */
+        color: #8591ff; /* Change color on hover */
+        font-weight: bold; /* Add other effects */
+      }
     </style>
     <link
       href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap"
@@ -31,10 +42,13 @@
     ></script>
     <link rel="stylesheet" href="/main.css" />
   </head>
-  <body>
+  <body hx-boost="true">
     <header id="main-header">
       <img src="/htmx-logo.jpg" alt="HTMX Logo" />
       <h1>Frontend Demo</h1>
+      <a href="nextproject.html" class="myMenu">Next Project</a>
+
+      <a href="other.html" class="myMenu">Ohter page</a>
     </header>
     <main>
       <div style="margin-top: -20px">
@@ -62,10 +76,11 @@
         >
           Live Change Demo
         </h3>
+        <div hx-trigger="load" hx-get="/listen"></div>
         <div id="updaterdiv" style="display: inline-flex; margin-top: -30px">
           <h4 style="color: chartreuse; margin-right: 120px; font-size: 20px">
             <div
-              hx-trigger="load, new-text-entered-event from:body, every 1s"
+              hx-trigger="load, new-text-entered-event from:body"
               hx-get="https://rust-sqlx.onrender.com/getlivetext"
               hx-target="#mylivetexttarget"
             ></div>

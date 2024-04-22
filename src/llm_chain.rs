@@ -7,6 +7,8 @@ use llm_chain::traits::Executor as ExecutorTrait;
 use llm_chain::{chains::sequential::Chain, prompt};
 use llm_chain_openai::chatgpt::Executor;
 
+
+
 pub async fn run_llm_chain(
     city: String,
     country: String,

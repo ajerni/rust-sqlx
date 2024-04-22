@@ -80,7 +80,7 @@
         <div id="updaterdiv" style="display: inline-flex; margin-top: -30px">
           <h4 style="color: chartreuse; margin-right: 120px; font-size: 20px">
             <div
-              hx-trigger="load, new-text-entered-event from:body"
+              hx-trigger="load, new-text-entered-event from:body, every 2s"
               hx-get="https://rust-sqlx.onrender.com/getlivetext"
               hx-target="#mylivetexttarget"
             ></div>

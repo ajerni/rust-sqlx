@@ -17,6 +17,9 @@ actix-files = "0.6.5"
 actix-cors = "0.7.0"
 llm-chain = "0.13.0"
 llm-chain-openai = "0.13.0"
+webbrowser = "1.0.0"
+
+
 
 #connect to your Postgrs Server like: cargo run-script connectdb (https://crates.io/crates/cargo-run-script)
 [package.metadata.scripts]

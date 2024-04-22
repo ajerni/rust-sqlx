@@ -2,13 +2,6 @@ use actix_web::{get, web, HttpResponse, Responder, web::Redirect};
 use sqlx::PgPool;
 use sqlx::postgres::PgListener;
 
-use webbrowser::open;
-
-fn go_to_page() {
-  let url = "https://www.andierni.ch";
-  open(url).unwrap();
-}
-
 #[get("/listen")]
 pub async fn listen_to_pgsql(pool: web::Data<PgPool>) -> impl Responder {
 
@@ -39,8 +32,7 @@ async fn handle_notification(event: sqlx::postgres::PgNotification) {
     if event.payload() == "plpgsql-trigger" {
         println!("plpsql is soooo coool!");
     }
-    
-    //TODO: use WebSockets or Server Sent Events to trigger reload of fetch() in htmx.html
-    go_to_page();
-    
+
+    // Redirect within the main thread
+    Redirect::to("/other").see_other();
 }

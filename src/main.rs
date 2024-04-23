@@ -20,6 +20,9 @@ use crate::scoreboard::*;
 mod sql_listener;
 use crate::sql_listener::*;
 
+mod dweet;
+use crate::dweet::*;
+
 #[derive(Debug, FromRow, Clone, Serialize, Deserialize)]
 struct Book {
     pub isbn: String,
@@ -476,6 +479,7 @@ async fn main() -> Result<(), Box<dyn Error>> {
             .service(livetextchange)
             .service(getlivetext)
             .service(listen_to_pgsql)
+            .service(dweet)
             .service(ai_get)
             .service(ai_post)
             .service(create)

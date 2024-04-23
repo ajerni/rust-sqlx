@@ -1,4 +1,4 @@
-use actix_web::{get, web, HttpResponse, Responder, web::Redirect};
+use actix_web::{get, web, HttpResponse, Responder};
 use sqlx::PgPool;
 use sqlx::postgres::PgListener;
 

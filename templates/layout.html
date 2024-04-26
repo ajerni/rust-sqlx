@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>HTML Templates Tera</title>
+    <link rel="stylesheet" href="https://unpkg.com/missing.css@1.1.1" />
+
+    <script
+      src="https://unpkg.com/htmx.org@1.9.12"
+      integrity="sha384-ujb1lZYygJmzgSwoxRggbCHcjc0rB2XoQrxeTUQyRjrOnlCoYta87iKBWq3EsdM2"
+      crossorigin="anonymous"
+    ></script>
+  </head>
+
+  <body hx-boost="true">
+    <main>
+      <header>
+        <h1>HTML Templates (Tera)</h1>
+        <nav>
+          <a href="/teratemplates">Home</a>
+          <a href="/edit">Edit</a>
+        </nav>
+      </header>
+      {% block content %}{% endblock %}
+    </main>
+  </body>
+</html>

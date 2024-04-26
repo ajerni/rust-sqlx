@@ -23,6 +23,9 @@ use crate::sql_listener::*;
 mod dweet;
 use crate::dweet::*;
 
+mod teratemplates;
+use crate::teratemplates::*;
+
 #[derive(Debug, FromRow, Clone, Serialize, Deserialize)]
 struct Book {
     pub isbn: String,
@@ -480,6 +483,8 @@ async fn main() -> Result<(), Box<dyn Error>> {
             .service(getlivetext)
             .service(listen_to_pgsql)
             .service(dweet)
+            .service(teratemplates)
+            .service(edit)
             .service(ai_get)
             .service(ai_post)
             .service(create)
